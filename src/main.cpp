@@ -1,11 +1,9 @@
 // ====================================================================
-// ULTRA-MEGA-LAAJENNETTU VALE-GEODE JÄRJESTELMÄ KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// JÄRETÖN NIMIAVARUUS-KAAPPARI KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
 #define menu_selector(_SELECTOR) (void*)(_SELECTOR)
-
-// Tehdään tästä turvallisesta poistokomennosta tyhjä makro, jotta rivi 183 ei kaadu!
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
 struct CCSize {
@@ -53,7 +51,6 @@ public:
     void setLayout(void* layout) {}
     void setContentSize(CCSize size) {}
     void updateLayout() {}
-    // Lisätään komento, josta rivi 180 valitti!
     CCMenu* autorelease() { return this; }
 };
 
@@ -69,6 +66,15 @@ public:
 
 class FLAlertLayer {};
 class EditorUI {};
+
+// Luodaan tyhjä vale-rakenne asetuksille, jotta Popup<AIConfig> kääntyy!
+struct AIConfig {};
+
+// LUODAAN VIRALLINEN GEODE-NIMIAVARUUS JA POPUP-MALLI LENNOSTA!
+namespace geode {
+    template <typename T>
+    class Popup {};
+}
 // ====================================================================
 
 
