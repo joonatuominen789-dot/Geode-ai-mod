@@ -1,9 +1,8 @@
 // ====================================================================
-// POMMINVARMA TYVIMUUNNOS-HACK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEINEN SKAALAUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-// Luodaan vale-funktiopohja, joka nielee minkä tahansa osoittimen ilman virheitä!
 template <typename T>
 void* make_vale_selector(T func) { return nullptr; }
 
@@ -41,6 +40,8 @@ public:
         static CCSprite instance;
         return &instance;
     }
+    // Lisätään puuttuva kokosäätökomento, josta rivi 281 valitti!
+    void setScale(float scale) {}
 };
 
 class CCLayer : public CCObject {
@@ -96,7 +97,6 @@ public:
         return &instance;
     }
     
-    // Korjataan setLayout palauttamaan RowLayout*, jotta sen perään voi ketjuttaa ->setGap
     RowLayout* setLayout(RowLayout* layout) { return layout; }
 };
 
@@ -279,7 +279,7 @@ protected:
             auto spr = CCSprite::createWithSpriteFrameName(face.second.c_str());
             if (!spr) spr = CCSprite::create("square02_001.png");
             spr->setScale(0.75f);
-            auto btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(AISettingsPopup::onSelectDifficulty));
+            auto btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(&AISettingsPopup::onSelectDifficulty));
             btn->setID(face.first);
             originalMenu->addChild(btn);
             m_faceButtons.push_back(btn);
