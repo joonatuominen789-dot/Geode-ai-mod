@@ -1,5 +1,5 @@
 // ====================================================================
-// KAUKO-ODOTETTU VIIMEINEN LUKITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// PAINIKKEEN SKAALAUS JA VÄRI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -108,9 +108,11 @@ public:
         return &instance;
     }
     void setID(std::string id) {}
-    
-    // Lisätään se puuttuva ID-luvun palautuskomento riville 317!
     std::string getID() { return ""; }
+    
+    // Lisätään puuttuvat väritys- ja kokokomennot, joista rivit 324 ja 325 valittivat!
+    void setColor(ccColor3B color) {}
+    void setScale(float scale) {}
 };
 
 class Mod {
@@ -137,8 +139,6 @@ namespace geode {
         
         CCSprite* m_bgSprite = new CCSprite();
         CCLayer* m_mainLayer = new CCLayer();
-        
-        // Luodaan se puuttuva m_buttonMenu valikkokerros riville 309!
         CCMenu* m_buttonMenu = new CCMenu();
     };
 }
