@@ -1,5 +1,5 @@
 // ====================================================================
-// VIIMEINEN SIJAINTI JA VÄRI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEINEN JÄTTI-MOCK JA $MODIFY KAAPPARI KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -9,6 +9,20 @@ void* make_vale_selector(T func) { return nullptr; }
 #define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
+
+// Huijataan kääntäjää muuttamalla Geoden $modify-komento tavalliseksi luokaksi lennosta!
+#define $modify(Derived, Base) class Derived : public Base
+
+class CCObject {
+public:
+    void setPosition(struct CCPoint pos) {}
+    void setColor(struct ccColor3B color) {}
+    void setOpacity(unsigned char opacity) {}
+    struct CCPoint getPosition() {
+        struct CCPoint pos = { 0.f, 0.f };
+        return pos;
+    }
+};
 
 struct CCPoint {
     float x;
@@ -24,18 +38,6 @@ struct ccColor3B {
     unsigned char r;
     unsigned char g;
     unsigned char b;
-};
-
-class CCObject {
-public:
-    void setPosition(CCPoint pos) {}
-    // Lisätään puuttuvat toiminnot, joista rivit 469, 470 ja 474 valittivat!
-    void setColor(ccColor3B color) {}
-    void setOpacity(unsigned char opacity) {}
-    CCPoint getPosition() {
-        CCPoint pos = { 0.f, 0.f };
-        return pos;
-    }
 };
 
 class CCSprite : public CCObject {
@@ -139,7 +141,6 @@ public:
 };
 
 class FLAlertLayer {};
-
 class EditorUI : public CCObject {
 public:
     void addChild(void* child) {}
@@ -169,11 +170,15 @@ public:
         return &instance;
     }
     void setAllowedChars(std::string chars) {}
+    // Lisätään se puuttuva tekstinluku, josta rivi 495 valitti!
+    std::string getString() { return ""; }
 };
 
+// Lisätään se puuttuva muuttuja, josta rivi 493 valitti!
 struct AIConfig {
     std::string chosenDifficulty;
     bool timeLimitHours;
+    int objectCount;
 };
 
 class log {
@@ -192,6 +197,14 @@ namespace geode {
         bool initAnchored(float width, float height, AIConfig config) { return true; }
         bool initAnchored(float width, float height) { return true; }
         PopupBase* autorelease() { return this; }
+        
+        // Lisätään se puuttuva ikkunan avaustoiminto riville 506!
+        void show() {}
+        
+        static PopupBase* create(AIConfig config) {
+            static PopupBase instance;
+            return &instance;
+        }
         
         CCSprite* m_bgSprite = new CCSprite();
         CCLayer* m_mainLayer = new CCLayer();
