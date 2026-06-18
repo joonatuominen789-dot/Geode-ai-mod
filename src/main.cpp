@@ -1,29 +1,9 @@
 // ====================================================================
-// TÄYDELLINEN VIRTUAALIFUNKTIO-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEISTELTY LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-template <typename T>
-void* make_vale_selector(T func) { return nullptr; }
-
-#define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
-#define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
-#define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
-
-#define $modify(Derived, Base) Derived : public Base
-
-class CCObject {
-public:
-    void setPosition(struct CCPoint pos) {}
-    void setColor(struct ccColor3B color) {}
-    void setOpacity(unsigned char opacity) {}
-    void setContentSize(struct CCSize size) {}
-    struct CCPoint getPosition() {
-        struct CCPoint pos = { 0.f, 0.f };
-        return pos;
-    }
-};
-
+// Nostetaan rakenteet aivan alkupäähän, jotta incomplete type -virheet poistuvat!
 struct CCPoint {
     float x;
     float y;
@@ -38,6 +18,27 @@ struct ccColor3B {
     unsigned char r;
     unsigned char g;
     unsigned char b;
+};
+
+template <typename T>
+void* make_vale_selector(T func) { return nullptr; }
+
+#define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
+#define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
+#define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
+
+#define $modify(Derived, Base) Derived : public Base
+
+class CCObject {
+public:
+    void setPosition(CCPoint pos) {}
+    void setColor(ccColor3B color) {}
+    void setOpacity(unsigned char opacity) {}
+    void setContentSize(CCSize size) {}
+    CCPoint getPosition() {
+        CCPoint pos = { 0.f, 0.f };
+        return pos;
+    }
 };
 
 class CCSprite : public CCObject {
@@ -200,10 +201,8 @@ public:
 namespace geode {
     namespace prelude {}
 
-    // Luodaan oletusrakenne tyhjille pop-upeille
     struct DefaultConfig {};
 
-    // Tehdään Popup-luokasta template, jotta virtuaaliset funktiot toimivat ilman incomplete type -virheitä!
     template <typename T = DefaultConfig>
     class Popup {
     public:
