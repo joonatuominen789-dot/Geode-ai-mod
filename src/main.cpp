@@ -1,5 +1,5 @@
 // ====================================================================
-// TÄYDELLINEN FUNKTIO-YLIKIRJOITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEINEN SIJAINTI JA VÄRI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -9,11 +9,6 @@ void* make_vale_selector(T func) { return nullptr; }
 #define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
-
-class CCObject {
-public:
-    void setPosition(struct CCPoint pos) {}
-};
 
 struct CCPoint {
     float x;
@@ -29,6 +24,18 @@ struct ccColor3B {
     unsigned char r;
     unsigned char g;
     unsigned char b;
+};
+
+class CCObject {
+public:
+    void setPosition(CCPoint pos) {}
+    // Lisätään puuttuvat toiminnot, joista rivit 469, 470 ja 474 valittivat!
+    void setColor(ccColor3B color) {}
+    void setOpacity(unsigned char opacity) {}
+    CCPoint getPosition() {
+        CCPoint pos = { 0.f, 0.f };
+        return pos;
+    }
 };
 
 class CCSprite : public CCObject {
@@ -81,7 +88,6 @@ public:
         return &instance;
     }
     void setString(std::string text) {}
-    void setColor(ccColor3B color) {}
 };
 
 class RowLayout {
@@ -119,7 +125,6 @@ public:
     }
     void setID(std::string id) {}
     std::string getID() { return ""; }
-    void setColor(ccColor3B color) {}
     void setScale(float scale) {}
 };
 
@@ -177,7 +182,6 @@ public:
 };
 
 namespace geode {
-    // Tehdään tästä tavallinen luokka ilman template-sekoituksia, jotta molemmat setupit toimivat ylikirjoituksessa!
     class PopupBase {
     public:
         virtual bool setup(AIConfig config) { return true; }
