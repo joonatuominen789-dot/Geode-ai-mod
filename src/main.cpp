@@ -1,9 +1,10 @@
 // ====================================================================
-// KETJUTUS- JA FUNKTIO-OSOITIN-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// FUNKTIO-OSOITIN-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-#define menu_selector(_SELECTOR) (void*)(_SELECTOR)
+// Muutetaan makro käyttämään edistynyttä castia, jotta rivi 214 hyväksytään!
+#define menu_selector(_SELECTOR) (void*)(size_t)(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
 class CCObject {
@@ -84,7 +85,6 @@ class CCMenu : public CCObject {
 public:
     void addChild(void* child) {}
     void setGap(float gap) {}
-    setGap(float gap) {}
     void setContentSize(CCSize size) {}
     void updateLayout() {}
     CCMenu* autorelease() { return this; }
@@ -94,7 +94,6 @@ public:
         return &instance;
     }
     
-    // Muutetaan tämä palauttamaan CCMenu*, jotta ketjutus toimii rivillä 264!
     CCMenu* setLayout(RowLayout* layout) { return this; }
 };
 
