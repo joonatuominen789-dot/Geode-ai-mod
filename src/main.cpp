@@ -130,16 +130,14 @@ public:
     void setScale(float scale) {}
 };
 
-// ====================================================================
-// KORJATTU LUOKKA: EditorUI sisältää nyt puuttuneen funktion
-// ====================================================================
 class EditorUI : public CCObject {
 public:
     void addChild(void* child) {}
     CCMenu* m_editGroupMenu = new CCMenu();
     
-    // TÄMÄ RIVI KORJAA VIRHEET: Kääntäjä tietää nyt mikä on onAIButtonPressed
-    void onAIButtonPressed(CCObject* sender);
+    // Alkuperäinen virtuaalinen init
+    virtual bool init(class LevelEditorLayer* editorLayer) { return true; }
+    void onAIButtonPressed(CCObject* sender) {}
 };
 
 class CCScheduler {
@@ -235,12 +233,38 @@ public:
 };
 
 // ====================================================================
-// PAINIKKEEN TOIMINNALLISUUS (Mitä tapahtuu kun nappia painetaan)
+// LISÄTTY MYEDITORUI -LUOKKA JA KORJATTU MENU_SELECTOR -VIRHE
 // ====================================================================
-void EditorUI::onAIButtonPressed(CCObject* sender) {
-    // Tähän tulee logiikka, kun painiketta painetaan editorissa
-    log::info("AI-painiketta painettu!");
-}
+class MyEditorUI : public EditorUI {
+public:
+    // Esitellään callback tässä luokassa, jotta menu_selector hyväksyy sen
+    void onAIButtonPressed(CCObject* sender) {
+        EditorUI::onAIButtonPressed(sender);
+    }
+
+    bool init(LevelEditorLayer* editorLayer) override {
+        if (!EditorUI::init(editorLayer)) return false;
+
+        // Luodaan testiteksti/label painiketta varten
+        auto buttonLabel = CCSprite::createWithSpriteFrameName("GJ_plusBtn_001.png");
+
+        // Osoitetaan nyt täsmälleen tämän luokan omaan funktioon
+        auto aiButton = CCMenuItemSpriteExtra::create(
+            buttonLabel,
+            this,
+            menu_selector(MyEditorUI::onAIButtonPressed)
+        );
+
+        if (aiButton) {
+            aiButton->setID("ai-generation-button");
+            if (m_editGroupMenu) {
+                m_editGroupMenu->addChild(aiButton);
+            }
+        }
+
+        return true;
+    }
+};
 // ====================================================================
 
 
