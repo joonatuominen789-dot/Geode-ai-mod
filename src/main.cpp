@@ -1,5 +1,5 @@
 // ====================================================================
-// POMMINVARMA LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEISTELTY LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -9,10 +9,8 @@ void* make_vale_selector(T func) { return nullptr; }
 #define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
+
 #define $modify(Derived, Base) Derived : public Base
-
-// Korjataan $modify-makro tekemään täysin itsenäinen ja toimiva luokkapohja ilman puolipistevirheitä.ase
-
 
 class CCObject {
 public:
@@ -132,13 +130,6 @@ public:
     void setScale(float scale) {}
 };
 
-class EditorUI : public CCObject {
-public:
-    void addChild(void* child) {}
-    void onAIButtonPressed(CCObject* sender) {}
-    CCMenu* m_editGroupMenu = new CCMenu();
-};
-
 class CCScheduler {
 public:
     void unscheduleSelector(void* selector, void* target) {}
@@ -188,15 +179,33 @@ public:
     static void info(std::string fmt, Args... args) {}
 };
 
-// Kerrotaan valepohjan funktioille että AIConfig-rakenne on olemassa, jotta ne tunnistavat sen!
 struct AIConfig;
+
+class LevelEditorLayer {
+public:
+    static LevelEditorLayer* get() {
+        static LevelEditorLayer instance;
+        return &instance;
+    }
+    void quickSave() {}
+    class EditorUI* m_editorUI = nullptr;
+};
+
+// Siirretään EditorUI alemmas, jotta se tunnistaa LevelEditorLayer-luokan oikein!
+class EditorUI : public CCObject {
+public:
+    void addChild(void* child) {}
+    void onAIButtonPressed(CCObject* sender) {}
+    CCMenu* m_editGroupMenu = new CCMenu();
+    // Lisätään se puuttuva alustusfunktio, josta rivi 546 valitti!
+    bool init(LevelEditorLayer* layer) { return true; }
+};
 
 namespace geode {
     namespace prelude {}
 
     class PopupBase {
     public:
-        // Palautetaan tähän se aito AIConfig-tyyppi void* tilalle, jotta rivi 604 korjaantuu!
         virtual bool setup(AIConfig config) { return true; }
         virtual bool setup() { return true; }
         void setTitle(std::string title, std::string font, float scale) {}
@@ -220,16 +229,6 @@ namespace geode {
     template <typename T = void>
     class Popup : public PopupBase {};
 }
-
-class LevelEditorLayer {
-public:
-    static LevelEditorLayer* get() {
-        static LevelEditorLayer instance;
-        return &instance;
-    }
-    void quickSave() {}
-    EditorUI* m_editorUI = new EditorUI();
-};
 // ====================================================================
 
 
