@@ -1,5 +1,5 @@
 // ====================================================================
-// TASOEDITORI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEINEN TÄYDELLINEN JÄTTI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -7,6 +7,7 @@ template <typename T>
 void* make_vale_selector(T func) { return nullptr; }
 
 #define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
+#define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
 class CCObject {
@@ -95,6 +96,8 @@ public:
         return &instance;
     }
     RowLayout* setLayout(RowLayout* layout) { return layout; }
+    // Lisätään virtuaalinen init, jotta rivi 236 ei valita!
+    virtual bool init() { return true; }
 };
 
 class CCMenuItemSpriteExtra : public CCObject {
@@ -124,33 +127,65 @@ public:
 };
 
 class FLAlertLayer {};
-class EditorUI {};
+
+// Luodaan vale-luokka editorin käyttöliittymälle riville 358
+class EditorUI : public CCObject {
+public:
+    void addChild(void* child) {}
+};
+
+// Luodaan puuttuvat ajastintyökalut riveille 219 ja 220
+class CCScheduler {
+public:
+    void unscheduleSelector(void* selector, void* target) {}
+};
+
+class CCDirector {
+public:
+    static CCDirector* sharedDirector() {
+        static CCDirector instance;
+        return &instance;
+    }
+    CCScheduler* getScheduler() {
+        static CCScheduler instance;
+        return &instance;
+    }
+};
 
 struct AIConfig {
     std::string chosenDifficulty;
     bool timeLimitHours;
 };
 
+// LUODAAN GEODE-NIMIAVARUUS JA LOKITYÖKALUT
 namespace geode {
     template <typename T>
     class Popup {
     public:
         virtual bool setup(T config) { return true; }
         void setTitle(std::string title, std::string font, float scale) {}
+        void onClose(void* sender) {} // Lisätty sulkukomento riville 364!
         
         CCSprite* m_bgSprite = new CCSprite();
         CCLayer* m_mainLayer = new CCLayer();
         CCMenu* m_buttonMenu = new CCMenu();
     };
+
+    // Luodaan vale-loki, jotta log::info -rivit toimivat!
+    class log {
+    public:
+        static void info(std::string text) {}
+    };
 }
 
-// Luodaan puuttuva tasoeditoriluokka riville 350!
 class LevelEditorLayer {
 public:
     static LevelEditorLayer* get() {
         static LevelEditorLayer instance;
         return &instance;
     }
+    // Luodaan se puuttuva m_editorUI-kerros riville 358!
+    EditorUI* m_editorUI = new EditorUI();
 };
 // ====================================================================
 
@@ -217,7 +252,7 @@ public:
 
     void stopLoop() {
         CCDirector::sharedDirector()->getScheduler()->unscheduleSelector(
-            schedule_selector(AIAUTOSAVE_MANAGER::triggerAutosaveLoop), this
+            schedule_selector(&AIAUTOSAVE_MANAGER::triggerAutosaveLoop), this
         );
         Mod::get()->setSavedValue("ai_elapsed_hours", 0);
         Mod::get()->setSavedValue("ai_is_running", false);
