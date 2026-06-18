@@ -14,14 +14,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Annetaan tälle vaiheelle id: build-mod, jotta voimme viitata sen tulokseen alempana
       - name: Build Mod
+        id: build-mod
         uses: geode-sdk/build-geode-mod@main
         with:
           platform: android
           setup-sdk: true
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: geode-build
-          path: ./build/*.geode
-          
+          # Pyydetään GitHubia ottamaan tiedosto suoraan kääntäjän ilmoittamasta polusta
+          path: ${{ steps.build-mod.outputs.build-output }}
