@@ -1,12 +1,16 @@
 // ====================================================================
-// KERROS- JA SIJAINTI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VALIKKO- JA KUVAFRAME-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
 #define menu_selector(_SELECTOR) (void*)(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
-// Luodaan vale-rakenne koordinaatteja varten, jotta setPosition toimii!
+class CCObject {
+public:
+    void setPosition(struct CCPoint pos) {}
+};
+
 struct CCPoint {
     float x;
     float y;
@@ -23,21 +27,19 @@ struct ccColor3B {
     unsigned char b;
 };
 
-class CCObject {
-public:
-    // Lisätään sijaintitoiminto kaikille kanta-luokille lennosta!
-    void setPosition(CCPoint pos) {}
-};
-
 class CCSprite : public CCObject {
 public:
     CCSize getContentSize() {
         CCSize size = { 300.f, 200.f };
         return size;
     }
+    // Lisätään puuttuva kuvien lataustoiminto, josta rivi 269 valitti!
+    static CCSprite* createWithSpriteFrameName(std::string name) {
+        static CCSprite instance;
+        return &instance;
+    }
 };
 
-// Luodaan puuttuva pääkerrosluokka, jotta addChild toimii!
 class CCLayer : public CCObject {
 public:
     void addChild(void* child) {}
@@ -87,6 +89,12 @@ public:
     void setContentSize(CCSize size) {}
     void updateLayout() {}
     CCMenu* autorelease() { return this; }
+    
+    // Lisätään se puuttuva valikon luontikomento riville 256!
+    static CCMenu* create() {
+        static CCMenu instance;
+        return &instance;
+    }
 };
 
 class Mod {
@@ -112,7 +120,6 @@ namespace geode {
         void setTitle(std::string title, std::string font, float scale) {}
         
         CCSprite* m_bgSprite = new CCSprite();
-        // Luodaan se puuttuva m_mainLayer pääkerros riville 239!
         CCLayer* m_mainLayer = new CCLayer();
     };
 }
