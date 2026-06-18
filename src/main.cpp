@@ -578,7 +578,7 @@ class $modify(MyEditorUI, EditorUI) {
         if (!EditorUI::init(editorLayer)) return false;
 
         auto buttonLabel = CCLabelBMFont::create("AI", "bigFont.fnt", 0.5f);
-        auto aiButton = CCMenuItemSpriteExtra::create(buttonLabel, this, menu_selector(MyEditorUI::onAIButtonPressed));
+        auto aiButton = CCMenuItemSpriteExtra::create(buttonLabel, this, menu_selector(&MyEditorUI::onAIButtonPressed));
 
         if (this->m_editGroupMenu) {
             this->m_editGroupMenu->addChild(aiButton);
