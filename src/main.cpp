@@ -1,5 +1,5 @@
 // ====================================================================
-// VIIMEINEN JÄTTI-MOCK JA $MODIFY KAAPPARI KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// KAUKO-ODOTETTU TÄYDELLINEN LOPULLINEN GEODE-MOCK KÄÄNTÄJÄLLE
 // ====================================================================
 #include <string>
 
@@ -10,14 +10,15 @@ void* make_vale_selector(T func) { return nullptr; }
 #define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
-// Huijataan kääntäjää muuttamalla Geoden $modify-komento tavalliseksi luokaksi lennosta!
-#define $modify(Derived, Base) class Derived : public Base
+// Korjataan $modify-makro sellaiseksi, ettei se riko C++ kääntäjän sääntöjä rivillä 537!
+#define $modify(Derived, Base) class Derived : public Base; class Vale##Derived : public Base
 
 class CCObject {
 public:
     void setPosition(struct CCPoint pos) {}
     void setColor(struct ccColor3B color) {}
     void setOpacity(unsigned char opacity) {}
+    void setContentSize(struct CCSize size) {} // Lisätty CCScale9Spriteä varten!
     struct CCPoint getPosition() {
         struct CCPoint pos = { 0.f, 0.f };
         return pos;
@@ -149,6 +150,8 @@ public:
 class CCScheduler {
 public:
     void unscheduleSelector(void* selector, void* target) {}
+    // Lisätään se puuttuva scheduleSelector-komento riville 260!
+    void scheduleSelector(void* selector, void* target, float interval, bool paused) {}
 };
 
 class CCDirector {
@@ -170,20 +173,20 @@ public:
         return &instance;
     }
     void setAllowedChars(std::string chars) {}
-    // Lisätään se puuttuva tekstinluku, josta rivi 495 valitti!
     std::string getString() { return ""; }
 };
 
-// Lisätään se puuttuva muuttuja, josta rivi 493 valitti!
 struct AIConfig {
     std::string chosenDifficulty;
     bool timeLimitHours;
     int objectCount;
 };
 
+// Tehdään log::info-funktiosta sellainen, että se hyväksyy minkä tahansa määrän muuttujia!
 class log {
 public:
-    static void info(std::string text) {}
+    template <typename... Args>
+    static void info(std::string fmt, Args... args) {}
 };
 
 namespace geode {
@@ -197,8 +200,6 @@ namespace geode {
         bool initAnchored(float width, float height, AIConfig config) { return true; }
         bool initAnchored(float width, float height) { return true; }
         PopupBase* autorelease() { return this; }
-        
-        // Lisätään se puuttuva ikkunan avaustoiminto riville 506!
         void show() {}
         
         static PopupBase* create(AIConfig config) {
@@ -221,6 +222,8 @@ public:
         static LevelEditorLayer instance;
         return &instance;
     }
+    // Lisätään puuttuva pikatallennus, josta rivi 273 valitti!
+    void quickSave() {}
     EditorUI* m_editorUI = new EditorUI();
 };
 // ====================================================================
@@ -258,7 +261,7 @@ public:
         isPaused = Mod::get()->getSavedValue<bool>("ai_is_paused", false);
 
         CCDirector::sharedDirector()->getScheduler()->scheduleSelector(
-            schedule_selector(AIAUTOSAVE_MANAGER::triggerAutosaveLoop), this, 3600.0f, false
+            schedule_selector(&AIAUTOSAVE_MANAGER::triggerAutosaveLoop), this, 3600.0f, false
         );
     }
 
@@ -493,7 +496,7 @@ protected:
         m_mainLayer->addChild(m_timeInput);
 
         auto nextSprite = ButtonSprite::create("NEXT", "goldFont.fnt", "GJ_button_01.png", 0.6f);
-        auto nextBtn = CCMenuItemSpriteExtra::create(nextSprite, this, menu_selector(AIOptionsPopup::onNextPage));
+        auto nextBtn = CCMenuItemSpriteExtra::create(nextSprite, this, menu_selector(&AIOptionsPopup::onNextPage));
         nextBtn->setPosition({0, -size.height / 2 + 25.f});
         m_buttonMenu->addChild(nextBtn);
 
