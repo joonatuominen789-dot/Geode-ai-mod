@@ -1,26 +1,341 @@
-#include <Geode/Geode.hpp>
-#include <Geode/modify/EditorUI.hpp>
-#include <Geode/ui/Popup.hpp>
+// ====================================================================
+// VIIMEISTELTY LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// ====================================================================
+#include <string>
+
+// Nostetaan rakenteet aivan alkupäähän, jotta incomplete type -virheet poistuvat!
+struct CCPoint {
+    float x;
+    float y;
+};
+
+struct CCSize {
+    float width;
+    float height;
+};
+
+struct ccColor3B {
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+};
+
+template <typename T>
+void* make_vale_selector(T func) { return nullptr; }
+
+#define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
+#define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
+#define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
+
+#define $modify(Derived, Base) Derived : public Base
+
+class CCObject {
+public:
+    void setPosition(CCPoint pos) {}
+    void setColor(ccColor3B color) {}
+    void setOpacity(unsigned char opacity) {}
+    void setContentSize(CCSize size) {}
+    CCPoint getPosition() {
+        CCPoint pos = { 0.f, 0.f };
+        return pos;
+    }
+};
+
+class CCSprite : public CCObject {
+public:
+    CCSize getContentSize() {
+        CCSize size = { 300.f, 200.f };
+        return size;
+    }
+    static CCSprite* createWithSpriteFrameName(std::string name) {
+        static CCSprite instance;
+        return &instance;
+    }
+    void setScale(float scale) {}
+    static CCSprite* create(std::string name) {
+        static CCSprite instance;
+        return &instance;
+    }
+};
+
+class CCScale9Sprite : public CCSprite {
+public:
+    static CCScale9Sprite* create(std::string name) {
+        static CCScale9Sprite instance;
+        return &instance;
+    }
+};
+
+class ButtonSprite : public CCSprite {
+public:
+    static ButtonSprite* create(std::string text, std::string font, std::string bg, float scale) {
+        static ButtonSprite instance;
+        return &instance;
+    }
+};
+
+class CCLayer : public CCObject {
+public:
+    void addChild(void* child) {}
+};
+
+class CCArray : public CCObject {
+public:
+    void* objectAtIndex(int index) { return nullptr; }
+};
+
+class CCLabelBMFont : public CCObject {
+public:
+    static CCLabelBMFont* create(std::string text, std::string font, float scale) {
+        static CCLabelBMFont instance;
+        return &instance;
+    }
+    void setString(std::string text) {}
+};
+
+class RowLayout {
+public:
+    static RowLayout* create() {
+        static RowLayout instance;
+        return &instance;
+    }
+    RowLayout* setGap(float gap) { return this; }
+};
+
+class CCMenu : public CCObject {
+public:
+    void addChild(void* child) {}
+    void setContentSize(CCSize size) {}
+    void updateLayout() {}
+    CCMenu* autorelease() { return this; }
+    static CCMenu* create() {
+        static CCMenu instance;
+        return &instance;
+    }
+    RowLayout* setLayout(RowLayout* layout) { return layout; }
+    virtual bool init() { return true; }
+};
+
+class CCMenuItemSpriteExtra : public CCObject {
+public:
+    static CCMenuItemSpriteExtra* create(void* sprite, void* target, void* selector) {
+        static CCMenuItemSpriteExtra instance;
+        return &instance;
+    }
+    CCArray* getChildren() {
+        static CCArray instance;
+        return &instance;
+    }
+    void setID(std::string id) {}
+    std::string getID() { return ""; }
+    void setScale(float scale) {}
+};
+
+class CCScheduler {
+public:
+    void unscheduleSelector(void* selector, void* target) {}
+    void scheduleSelector(void* selector, void* target, float interval, bool paused) {}
+};
+
+class CCDirector {
+public:
+    static CCDirector* sharedDirector() {
+        static CCDirector instance;
+        return &instance;
+    }
+    CCScheduler* getScheduler() {
+        static CCScheduler instance;
+        return &instance;
+    }
+};
+
+class CCTextInputNode : public CCObject {
+public:
+    static CCTextInputNode* create(float width, float height, std::string placeholder, std::string font) {
+        static CCTextInputNode instance;
+        return &instance;
+    }
+    void setAllowedChars(std::string chars) {}
+    std::string getString() { return ""; }
+};
+
+class Mod {
+public:
+    static Mod* get() {
+        static Mod instance;
+        return &instance;
+    }
+    template <typename T>
+    void setSavedValue(std::string key, T value) {}
+    
+    template <typename T>
+    T getSavedValue(std::string key, T default_val) { return default_val; }
+};
+
+class FLAlertLayer {};
+
+class log {
+public:
+    template <typename... Args>
+    static void info(std::string fmt, Args... args) {}
+};
+
+class LevelEditorLayer {
+public:
+    static LevelEditorLayer* get() {
+        static LevelEditorLayer instance;
+        return &instance;
+    }
+    void quickSave() {}
+    class EditorUI* m_editorUI = nullptr;
+};
+
+class EditorUI : public CCObject {
+public:
+    void addChild(void* child) {}
+    void onAIButtonPressed(CCObject* sender) {}
+    CCMenu* m_editGroupMenu = new CCMenu();
+    bool init(LevelEditorLayer* layer) { return true; }
+};
+
+namespace geode {
+    namespace prelude {}
+
+    struct DefaultConfig {};
+
+    template <typename T = DefaultConfig>
+    class Popup {
+    public:
+        virtual bool setup(T config) { return true; }
+        virtual bool setup() { return true; }
+        
+        void setTitle(std::string title, std::string font, float scale) {}
+        void onClose(void* sender) {}
+        
+        bool initAnchored(float width, float height, T config) { return true; }
+        bool initAnchored(float width, float height) { return true; }
+        Popup* autorelease() { return this; }
+        void show() {}
+        
+        static Popup* create(T config) {
+            static Popup instance;
+            return &instance;
+        }
+        
+        CCSprite* m_bgSprite = new CCSprite();
+        CCLayer* m_mainLayer = new CCLayer();
+        CCMenu* m_buttonMenu = new CCMenu();
+    };
+}
+// ====================================================================
+
+
+#include <vector>
+#include <string>
 
 using namespace geode::prelude;
 
-// ====================================================================
-// 1. ASETUKSET JA RAKENTEET
-// ====================================================================
+// ==========================================
+// 1. ASETUKSET JA TIETORAKENTEET
+// ==========================================
 struct AIConfig {
-    std::string chosenDifficulty = "Auto";
-    int objectCount = 100;
-    bool timeLimitHours = false;
+    int objectCount = 0;
+    std::string theme = "";
+    int timeLimitHours = 24;
+    std::string chosenDifficulty = "Normal";
 };
 
-// ====================================================================
-// 2. PAUSE-VALIKON OHJAUSPANEELI
-// ====================================================================
-class AIPauseControlPanel : public CCMenu {
-private:
-    bool m_isAIActive = false;
+enum TriggerType { MOVE = 901, PULSE = 1006, ALPHA = 1007, TOGGLE = 1049 };
 
+// ==========================================
+// 2. TALLENNUS- JA AJASTINJÄRJESTELMÄ
+// ==========================================
+class AIAUTOSAVE_MANAGER : public CCObject {
 public:
+    int elapsedHours = 0;
+    int maxHours = 24;
+    bool isPaused = false;
+
+    void startLoop() {
+        elapsedHours = Mod::get()->getSavedValue<int>("ai_elapsed_hours", 0);
+        maxHours = Mod::get()->getSavedValue<int>("ai_max_hours", 24);
+        isPaused = Mod::get()->getSavedValue<bool>("ai_is_paused", false);
+
+        CCDirector::sharedDirector()->getScheduler()->scheduleSelector(
+            schedule_selector(&AIAUTOSAVE_MANAGER::triggerAutosaveLoop), this, 3600.0f, false
+        );
+    }
+
+    void triggerAutosaveLoop(float dt) {
+        if (isPaused) return;
+
+        elapsedHours++;
+        Mod::get()->setSavedValue("ai_elapsed_hours", elapsedHours);
+
+        auto editor = LevelEditorLayer::get();
+        if (editor) {
+            editor->quickSave();
+            log::info("[AI Mod] Progress saved automatically: {}h/{}h", elapsedHours, maxHours);
+        }
+
+        if (elapsedHours >= maxHours) {
+            stopLoop();
+            log::info("[AI Mod] Task completed successfully.");
+        }
+    }
+
+    void togglePause() {
+        isPaused = !isPaused;
+        Mod::get()->setSavedValue("ai_is_paused", isPaused);
+        log::info("[AI Mod] Generation status changed. Paused: {}", isPaused);
+    }
+
+    void stopLoop() {
+        CCDirector::sharedDirector()->getScheduler()->unscheduleSelector(
+            schedule_selector(&AIAUTOSAVE_MANAGER::triggerAutosaveLoop), this
+        );
+        Mod::get()->setSavedValue("ai_elapsed_hours", 0);
+        Mod::get()->setSavedValue("ai_is_running", false);
+        Mod::get()->setSavedValue("ai_is_paused", false);
+    }
+};
+
+static AIAUTOSAVE_MANAGER* s_saveManager = nullptr;
+
+// ==========================================
+// 3. TAUKOPAINIKE JA NÄKYMÄ EDITORISSA
+// ==========================================
+class AIPauseControlPanel : public CCMenu {
+public:
+    bool init() override {
+        if (!CCMenu::init()) return false;
+
+        this->setLayout(RowLayout::create()->setGap(10.f));
+        this->setContentSize({150.f, 40.f});
+
+        auto pauseLabel = CCLabelBMFont::create("PAUSE AI", "bigFont.fnt", 0.4f);
+        auto pauseBtn = CCMenuItemSpriteExtra::create(pauseLabel, this, menu_selector(&AIPauseControlPanel::onPauseToggle));
+        this->addChild(pauseBtn);
+
+        this->updateLayout();
+        return true;
+    }
+
+    void onPauseToggle(CCObject* sender) {
+        if (s_saveManager) {
+            s_saveManager->togglePause();
+            
+            auto lbl = static_cast<CCLabelBMFont*>(static_cast<CCMenuItemSpriteExtra*>(sender)->getChildren()->objectAtIndex(0));
+            if (s_saveManager->isPaused) {
+                lbl->setString("RESUME AI");
+                lbl->setColor({255, 100, 100});
+            } else {
+                lbl->setString("PAUSE AI");
+                lbl->setColor({255, 255, 255});
+            }
+        }
+    }
+
     static AIPauseControlPanel* create() {
         auto ret = new AIPauseControlPanel();
         if (ret && ret->init()) {
@@ -30,201 +345,96 @@ public:
         CC_SAFE_DELETE(ret);
         return nullptr;
     }
-
-    bool init() override {
-        if (!CCMenu::init()) return false;
-
-        this->setID("ai-pause-control-panel");
-        
-        auto layout = RowLayout::create();
-        layout->setGap(10.f);
-        this->setLayout(layout);
-
-        this->setContentSize({ 150.f, 40.f });
-
-        m_isAIActive = Mod::get()->getSavedValue<bool>("ai-enabled-state", false);
-
-        auto label = CCLabelBMFont::create("PAUSE AI", "bigFont.fnt", 0.4f);
-        this->addChild(label);
-
-        std::string btnText = m_isAIActive ? "RESUME AI" : "PAUSE AI";
-        auto btnSprite = ButtonSprite::create(btnText, "goldFont.fnt", "GJ_button_01.png", 0.6f);
-        auto toggleBtn = CCMenuItemSpriteExtra::create(
-            btnSprite,
-            this,
-            menu_selector(&AIPauseControlPanel::onPauseToggle)
-        );
-        toggleBtn->setID("ai-toggle-button");
-        this->addChild(toggleBtn);
-
-        if (m_isAIActive) {
-            auto textLabel = typeinfo_cast<CCLabelBMFont*>(btnSprite->getChildren()->objectAtIndex(0));
-            if (textLabel) textLabel->setColor({ 255, 100, 100 });
-        }
-
-        this->updateLayout();
-        return true;
-    }
-
-    void onPauseToggle(CCObject* sender) {
-        m_isAIActive = !m_isAIActive;
-        Mod::get()->setSavedValue<bool>("ai-enabled-state", m_isAIActive);
-
-        auto toggleBtn = typeinfo_cast<CCMenuItemSpriteExtra*>(sender);
-        if (toggleBtn) {
-            auto btnSprite = typeinfo_cast<ButtonSprite*>(toggleBtn->getChildren()->objectAtIndex(0));
-            if (btnSprite) {
-                auto textLabel = typeinfo_cast<CCLabelBMFont*>(btnSprite->getChildren()->objectAtIndex(0));
-                if (textLabel) {
-                    if (m_isAIActive) {
-                        textLabel->setString("RESUME AI");
-                        textLabel->setColor({ 255, 100, 100 });
-                    } else {
-                        textLabel->setString("PAUSE AI");
-                        textLabel->setColor({ 255, 255, 255 });
-                    }
-                }
-            }
-        }
-        
-        log::info("AI Pause -tila muutettu: {}", m_isAIActive);
-    }
 };
-
-// ====================================================================
-// 3. AUTOMAATTISEN TALLENNUKSEN HALLINTA
-// ====================================================================
-class AIAUTOSAVE_MANAGER {
-public:
-    static void startAutosaveLoop() {
-        bool isEnabled = Mod::get()->getSavedValue<bool>("ai-enabled-state", false);
-        if (isEnabled) {
-            log::info("Käynnistetään tekoälyn automaattitallennus...");
-            CCDirector::sharedDirector()->getScheduler()->scheduleSelector(
-                schedule_selector(&AIAUTOSAVE_MANAGER::triggerAutosaveLoop),
-                Mod::get(),
-                60.0f,
-                false
-            );
-        }
-    }
-
-    static void stopAutosaveLoop() {
-        log::info("Pysäytetään tekoälyn automaattitallennus.");
-        CCDirector::sharedDirector()->getScheduler()->unscheduleSelector(
-            schedule_selector(&AIAUTOSAVE_MANAGER::triggerAutosaveLoop),
-            Mod::get()
-        );
-    }
-
-    static void triggerAutosaveLoop(float dt) {
-        if (auto editor = LevelEditorLayer::get()) {
-            editor->quickSave();
-            log::info("[AI-AUTOSAVE] Taso tallennettu automaattisesti taustalla.");
-        }
-    }
-};
-// ====================================================================
-// 4. TEKOÄLYN ASETUSVALIKKO (POPUP)
-// ====================================================================
+// ==========================================
+// 4. TOINEN VALIKKO: VAIKEUSASTEET (AI SETTINGS)
+// ==========================================
 class AISettingsPopup : public geode::Popup<AIConfig> {
 protected:
     AIConfig m_config;
-    CCMenuItemSpriteExtra* m_currentDifficultyBtn = nullptr;
+    std::vector<CCMenuItemSpriteExtra*> m_faceButtons;
+    std::string m_selectedDiff = "Normal";
 
     bool setup(AIConfig config) override {
         m_config = config;
-        this->setTitle("AI Configuration", "bigFont.fnt", 0.7f);
+        this->setTitle("AI SETTINGS", "bigFont.fnt", 0.6f);
+        auto size = m_bgSprite->getContentSize();
 
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
-        
-        auto bg = CCScale9Sprite::create("square02_001.png");
-        bg->setContentSize({ 340.f, 220.f });
-        bg->setColor({ 0, 0, 0 });
-        bg->setOpacity(100);
-        bg->setPosition({ winSize.width / 2, winSize.height / 2 });
-        m_mainLayer->addChild(bg);
+        auto mainLabel = CCLabelBMFont::create("WHAT DIFFICULTY", "bigFont.fnt", 0.55f);
+        mainLabel->setPosition({size.width / 2, size.height - 40.f});
+        m_mainLayer->addChild(mainLabel);
 
-        auto difficultyMenu = CCMenu::create();
-        difficultyMenu->setLayout(RowLayout::create()->setGap(8.f));
-        difficultyMenu->setContentSize({ 300.f, 40.f });
-        difficultyMenu->setPosition({ winSize.width / 2, winSize.height / 2 + 30.f });
-        m_mainLayer->addChild(difficultyMenu);
+        auto originalMenu = CCMenu::create();
+        originalMenu->setLayout(RowLayout::create()->setGap(12.f));
+        originalMenu->setContentSize({380.f, 50.f});
+        originalMenu->setPosition({size.width / 2, size.height - 100.f});
 
-        std::vector<std::string> difficulties = {"Auto", "Easy", "Normal", "Hard", "Demon"};
-        for (const auto& diff : difficulties) {
-            auto label = CCLabelBMFont::create(diff, "bigFont.fnt", 0.4f);
-            auto btn = CCMenuItemSpriteExtra::create(
-                label,
-                this,
-                menu_selector(&AISettingsPopup::onSelectDifficulty)
-            );
-            btn->setID(diff);
-            difficultyMenu->addChild(btn);
+        std::vector<std::pair<std::string, std::string>> standardFaces = {
+            {"Auto", "difficulty_01_btn_001.png"}, {"Easy", "difficulty_02_btn_001.png"},
+            {"Normal", "difficulty_03_btn_001.png"}, {"Hard", "difficulty_04_btn_001.png"},
+            {"Harder", "difficulty_05_btn_001.png"}, {"Insane", "difficulty_06_btn_001.png"},
+            {"Demon", "difficulty_07_btn_001.png"}
+        };
 
-            if (diff == m_config.chosenDifficulty) {
-                m_currentDifficultyBtn = btn;
-                btn->setScale(1.1f);
-                label->setColor({ 100, 255, 100 });
-            }
+        for (auto& face : standardFaces) {
+            auto spr = CCSprite::createWithSpriteFrameName(face.second.c_str());
+            if (!spr) spr = CCSprite::create("square02_001.png");
+            spr->setScale(0.75f);
+            auto btn = CCMenuItemSpriteExtra::create(spr, this, menu_selector(&AISettingsPopup::onSelectDifficulty));
+            btn->setID(face.first);
+            originalMenu->addChild(btn);
+            m_faceButtons.push_back(btn);
         }
-        difficultyMenu->updateLayout();
+        originalMenu->updateLayout();
+        m_mainLayer->addChild(originalMenu);
 
-        auto objectInput = CCTextInputNode::create(120.f, 30.f, "Objects", "bigFont.fnt");
-        objectInput->setAllowedChars("0123456789");
-        objectInput->setPosition({ winSize.width / 2 - 60.f, winSize.height / 2 - 20.f });
-        m_mainLayer->addChild(objectInput);
-
-        auto timeInput = CCTextInputNode::create(120.f, 30.f, "Time Limit", "bigFont.fnt");
-        timeInput->setAllowedChars("0123456789");
-        timeInput->setPosition({ winSize.width / 2 + 60.f, winSize.height / 2 - 20.f });
-        m_mainLayer->addChild(timeInput);
-
-        auto finishBtnSprite = ButtonSprite::create("FINISH", "goldFont.fnt", "GJ_button_01.png", 0.7f);
-        auto finishBtn = CCMenuItemSpriteExtra::create(
-            finishBtnSprite,
-            this,
-            menu_selector(&AISettingsPopup::onFinish)
-        );
+        auto finishSprite = ButtonSprite::create("FINISH", "goldFont.fnt", "GJ_button_01.png", 0.6f);
+        auto finishBtn = CCMenuItemSpriteExtra::create(finishSprite, this, menu_selector(&AISettingsPopup::onFinish));
+        finishBtn->setPosition({0, -size.height / 2 + 22.f});
         m_buttonMenu->addChild(finishBtn);
 
+        updateSelectionVisuals();
         return true;
     }
 
     void onSelectDifficulty(CCObject* sender) {
-        if (m_currentDifficultyBtn) {
-            m_currentDifficultyBtn->setScale(1.0f);
-            if (auto oldLabel = typeinfo_cast<CCLabelBMFont*>(m_currentDifficultyBtn->getChildren()->objectAtIndex(0))) {
-                oldLabel->setColor({ 255, 255, 255 });
-            }
-        }
+        auto clickedBtn = static_cast<CCMenuItemSpriteExtra*>(sender);
+        m_selectedDiff = clickedBtn->getID();
+        updateSelectionVisuals();
+    }
 
-        m_currentDifficultyBtn = typeinfo_cast<CCMenuItemSpriteExtra*>(sender);
-        if (m_currentDifficultyBtn) {
-            m_currentDifficultyBtn->setScale(1.1f);
-            m_config.chosenDifficulty = m_currentDifficultyBtn->getID();
-            if (auto newLabel = typeinfo_cast<CCLabelBMFont*>(m_currentDifficultyBtn->getChildren()->objectAtIndex(0))) {
-                newLabel->setColor({ 100, 255, 100 });
+    void updateSelectionVisuals() {
+        for (auto btn : m_faceButtons) {
+            if (btn->getID() == m_selectedDiff) {
+                btn->setColor({255, 255, 255});
+                btn->setScale(1.1f);
+            } else {
+                btn->setColor({100, 100, 100});
+                btn->setScale(0.85f);
             }
         }
     }
 
     void onFinish(CCObject* sender) {
-        if (auto objectInput = typeinfo_cast<CCTextInputNode*>(m_mainLayer->getChildByID("object-input"))) {
-            if (!objectInput->getString().empty()) {
-                m_config.objectCount = std::stoi(objectInput->getString());
-            }
-        }
-        
-        if (auto timeInput = typeinfo_cast<CCTextInputNode*>(m_mainLayer->getChildByID("time-input"))) {
-            if (!timeInput->getString().empty()) {
-                m_config.timeLimitHours = std::stoi(timeInput->getString()) > 0;
-            }
-        }
+        m_config.chosenDifficulty = m_selectedDiff;
 
-        Mod::get()->setSavedValue<std::string>("ai-difficulty", m_config.chosenDifficulty);
-        Mod::get()->setSavedValue<int>("ai-object-count", m_config.objectCount);
-        Mod::get()->setSavedValue<bool>("ai-time-limit", m_config.timeLimitHours);
+        Mod::get()->setSavedValue("ai_is_running", true);
+        Mod::get()->setSavedValue("ai_max_hours", m_config.timeLimitHours);
+        Mod::get()->setSavedValue("ai_elapsed_hours", 0);
+        Mod::get()->setSavedValue("ai_is_paused", false);
+
+        if (s_saveManager) s_saveManager->stopLoop();
+
+        s_saveManager = new AIAUTOSAVE_MANAGER();
+        s_saveManager->maxHours = m_config.timeLimitHours;
+        s_saveManager->startLoop();
+
+        auto editor = LevelEditorLayer::get();
+        if (editor && editor->m_editorUI) {
+            auto panel = AIPauseControlPanel::create();
+            panel->setPosition({100.f, 200.f});
+            editor->m_editorUI->addChild(panel);
+        }
 
         this->onClose(sender);
     }
@@ -232,7 +442,7 @@ protected:
 public:
     static AISettingsPopup* create(AIConfig config) {
         auto ret = new AISettingsPopup();
-        if (ret && ret->initAnchored(360.f, 240.f, config)) {
+        if (ret && ret->initAnchored(420.f, 260.f, config)) {
             ret->autorelease();
             return ret;
         }
@@ -241,41 +451,82 @@ public:
     }
 };
 
-// ====================================================================
-// 5. SEURAAVAN SIVUN LISÄVALIKKO (OPTIOT)
-// ====================================================================
+// ==========================================
+// 5. ENSIMMÄINEN VALIKKO: PARAMETRIT (AI OPTIONS)
+// ==========================================
 class AIOptionsPopup : public geode::Popup<> {
 protected:
+    CCTextInputNode* m_objectsInput;
+    CCTextInputNode* m_themeInput;
+    CCTextInputNode* m_timeInput;
+
     bool setup() override {
-        this->setTitle("AI Advanced Options", "bigFont.fnt", 0.7f);
-        auto winSize = CCDirector::sharedDirector()->getWinSize();
+        this->setTitle("AI OPTIONS", "bigFont.fnt", 0.6f);
+        auto size = m_bgSprite->getContentSize();
 
-        auto bg = CCScale9Sprite::create("square02_001.png");
-        bg->setContentSize({ 300.f, 160.f });
-        bg->setColor({ 0, 0, 0 });
-        bg->setOpacity(120);
-        bg->setPosition({ winSize.width / 2, winSize.height / 2 });
-        m_mainLayer->addChild(bg);
+        auto labelObjects = CCLabelBMFont::create("HOW MANY OBJECTS", "goldFont.fnt", 0.45f);
+        labelObjects->setPosition({size.width / 2, size.height - 50.f});
+        m_mainLayer->addChild(labelObjects);
 
-        auto themeInput = CCTextInputNode::create(180.f, 30.f, "Custom AI Theme", "bigFont.fnt");
-        themeInput->setPosition({ winSize.width / 2, winSize.height / 2 + 10.f });
-        m_mainLayer->addChild(themeInput);
+        auto bgObjects = CCScale9Sprite::create("square02b_001.png");
+        bgObjects->setContentSize({280, 30});
+        bgObjects->setPosition({size.width / 2, size.height - 75.f});
+        bgObjects->setColor({0, 0, 0});
+        bgObjects->setOpacity(100);
+        m_mainLayer->addChild(bgObjects);
 
-        auto closeBtnSprite = ButtonSprite::create("CLOSE", "goldFont.fnt", "GJ_button_06.png", 0.6f);
-        auto closeBtn = CCMenuItemSpriteExtra::create(
-            closeBtnSprite,
-            this,
-            menu_selector(&AIOptionsPopup::onClose)
-        );
-        m_buttonMenu->addChild(closeBtn);
+        m_objectsInput = CCTextInputNode::create(270.f, 20.f, "25000-500000", "bigFont.fnt");
+        m_objectsInput->setPosition(bgObjects->getPosition());
+        m_objectsInput->setAllowedChars("0123456789");
+        m_mainLayer->addChild(m_objectsInput);
+
+        auto labelTime = CCLabelBMFont::create("HOW MUCH TIME DOES THE AI HAVE", "goldFont.fnt", 0.45f);
+        labelTime->setPosition({size.width / 2, size.height - 170.f});
+        m_mainLayer->addChild(labelTime);
+
+        auto bgTime = CCScale9Sprite::create("square02b_001.png");
+        bgTime->setContentSize({280, 30});
+        bgTime->setPosition({size.width / 2, size.height - 195.f});
+        bgTime->setColor({0, 0, 0});
+        bgTime->setOpacity(100);
+        m_mainLayer->addChild(bgTime);
+
+        m_timeInput = CCTextInputNode::create(270.f, 20.f, "24h - 240h", "bigFont.fnt");
+        m_timeInput->setPosition(bgTime->getPosition());
+        m_timeInput->setAllowedChars("0123456789");
+        m_mainLayer->addChild(m_timeInput);
+
+        auto nextSprite = ButtonSprite::create("NEXT", "goldFont.fnt", "GJ_button_01.png", 0.6f);
+        auto nextBtn = CCMenuItemSpriteExtra::create(nextSprite, this, menu_selector(&AIOptionsPopup::onNextPage));
+        nextBtn->setPosition({0, -size.height / 2 + 25.f});
+        m_buttonMenu->addChild(nextBtn);
 
         return true;
+    }
+
+    void onNextPage(CCObject* sender) {
+        AIConfig currentData;
+        std::string countStr = m_objectsInput->getString();
+        try { if (!countStr.empty()) currentData.objectCount = std::stoi(countStr); } catch(...) {}
+        
+        std::string timeStr = m_timeInput->getString();
+        try {
+            if (!timeStr.empty()) {
+                int inputHours = std::stoi(timeStr);
+                if (inputHours < 24) inputHours = 24;
+                if (inputHours > 240) inputHours = 240;
+                currentData.timeLimitHours = inputHours;
+            }
+        } catch(...) { currentData.timeLimitHours = 24; }
+
+        this->onClose(sender);
+        AISettingsPopup::create(currentData)->show();
     }
 
 public:
     static AIOptionsPopup* create() {
         auto ret = new AIOptionsPopup();
-        if (ret && ret->initAnchored(320.f, 200.f)) {
+        if (ret && ret->initAnchored(360.f, 260.f)) {
             ret->autorelease();
             return ret;
         }
@@ -284,47 +535,37 @@ public:
     }
 };
 
-// ====================================================================
-// 6. GEODE HOOKS (PELILAATAAJAN LIITÄNTÄÄ)
-// ====================================================================
+// ==========================================
+// 6. PELIN EDITORIN KYTKENTÄ (HOOK)
+// ==========================================
 class $modify(MyEditorUI, EditorUI) {
     bool init(LevelEditorLayer* editorLayer) {
         if (!EditorUI::init(editorLayer)) return false;
 
-        log::info("Tekoälyn muokkaustyökalut liitetty EditorUI:hin!");
+        auto buttonLabel = CCLabelBMFont::create("AI", "bigFont.fnt", 0.5f);
+        auto aiButton = CCMenuItemSpriteExtra::create(buttonLabel, this, menu_selector(&MyEditorUI::onAIButtonPressed));
 
-        auto pausePanel = AIPauseControlPanel::create();
-        m_editGroupMenu->addChild(pausePanel);
+        if (this->m_editGroupMenu) {
+            this->m_editGroupMenu->addChild(aiButton);
+            this->m_editGroupMenu->updateLayout();
+        }
 
-        auto aiIconSprite = CCSprite::createWithSpriteFrameName("GJ_plusBtn_001.png");
-        auto aiMenuBtn = CCMenuItemSpriteExtra::create(
-            aiIconSprite,
-            this,
-            menu_selector(&MyEditorUI::onAIButtonPressed)
-        );
-        aiMenuBtn->setID("ai-config-menu-button");
-        m_editGroupMenu->addChild(aiMenuBtn);
+        bool wasRunning = Mod::get()->getSavedValue<bool>("ai_is_running", false);
+        if (wasRunning) {
+            if (!s_saveManager) {
+                s_saveManager = new AIAUTOSAVE_MANAGER();
+                s_saveManager->startLoop();
+            }
 
-        m_editGroupMenu->updateLayout();
+            auto panel = AIPauseControlPanel::create();
+            panel->setPosition({100.f, 200.f});
+            this->addChild(panel);
+        }
 
-        AIAUTOSAVE_MANAGER::startAutosaveLoop();
         return true;
     }
 
     void onAIButtonPressed(CCObject* sender) {
-        AIConfig currentConfig;
-        currentConfig.chosenDifficulty = Mod::get()->getSavedValue<std::string>("ai-difficulty", "Auto");
-        currentConfig.objectCount = Mod::get()->getSavedValue<int>("ai-object-count", 100);
-        currentConfig.timeLimitHours = Mod::get()->getSavedValue<bool>("ai-time-limit", false);
-
-        if (auto popup = AISettingsPopup::create(currentConfig)) {
-            popup->show();
-        }
-    }
-
-    void onNextPage(CCObject* sender) {
-        if (auto optionsPopup = AIOptionsPopup::create()) {
-            optionsPopup->show();
-        }
+        AIOptionsPopup::create()->show();
     }
 };
