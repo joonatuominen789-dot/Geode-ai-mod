@@ -1,16 +1,18 @@
 // ====================================================================
-// MEGA-LAAJENNETTU VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// ULTRA-MEGA-LAAJENNETTU VALE-GEODE JÄRJESTELMÄ KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
 #define menu_selector(_SELECTOR) (void*)(_SELECTOR)
+
+// Tehdään tästä turvallisesta poistokomennosta tyhjä makro, jotta rivi 183 ei kaadu!
+#define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
 struct CCSize {
     float width;
     float height;
 };
 
-// Luodaan vale-taulukko, jotta getChildren().objectAtIndex toimii!
 class CCArray {
 public:
     void* objectAtIndex(int index) { return nullptr; }
@@ -50,7 +52,9 @@ public:
     void setGap(float gap) {}
     void setLayout(void* layout) {}
     void setContentSize(CCSize size) {}
-    void updateLayout() {} // Lisätty komento, josta rivi 147 valitti!
+    void updateLayout() {}
+    // Lisätään komento, josta rivi 180 valitti!
+    CCMenu* autorelease() { return this; }
 };
 
 class Mod {
