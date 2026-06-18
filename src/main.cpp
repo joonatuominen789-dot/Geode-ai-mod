@@ -1,14 +1,19 @@
 // ====================================================================
-// ULTRA-LAAJENNETTU VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// MEGA-LAAJENNETTU VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-// Makro painikkeiden klikkaustoimintoja varten
 #define menu_selector(_SELECTOR) (void*)(_SELECTOR)
 
 struct CCSize {
     float width;
     float height;
+};
+
+// Luodaan vale-taulukko, jotta getChildren().objectAtIndex toimii!
+class CCArray {
+public:
+    void* objectAtIndex(int index) { return nullptr; }
 };
 
 class CCLabelBMFont {
@@ -23,6 +28,10 @@ class CCMenuItemSpriteExtra {
 public:
     static CCMenuItemSpriteExtra* create(void* sprite, void* target, void* selector) {
         static CCMenuItemSpriteExtra instance;
+        return &instance;
+    }
+    CCArray* getChildren() {
+        static CCArray instance;
         return &instance;
     }
 };
@@ -41,6 +50,7 @@ public:
     void setGap(float gap) {}
     void setLayout(void* layout) {}
     void setContentSize(CCSize size) {}
+    void updateLayout() {} // Lisätty komento, josta rivi 147 valitti!
 };
 
 class Mod {
@@ -56,6 +66,7 @@ public:
 class FLAlertLayer {};
 class EditorUI {};
 // ====================================================================
+
 
 #include <vector>
 #include <string>
