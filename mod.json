@@ -1,0 +1,18 @@
+{
+    "geode": "4.0.0",
+    "id": "joonatuominen.ai_editor_mod",
+    "version": "1.0.0",
+    "name": "AI Editor Assistant",
+    "developer": "Joonas",
+    "description": "Adds an AI customization popup panel to the level editor UI.",
+    "dependencies": [
+        {
+            "id": "geode.loader",
+            "version": "v4.0.0",
+            "importance": "required"
+        }
+    ],
+    "resources": {
+        "sprites": []
+    }
+}
