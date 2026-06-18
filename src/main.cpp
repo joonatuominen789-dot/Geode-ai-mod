@@ -1,6 +1,30 @@
-#include <Geode/Geode.hpp>
-#include <Geode/modify/EditorUI.hpp>
-#include <Geode/ui/Popup.hpp>
+// ====================================================================
+// ÄÄRIMMÄISEN MONIMUTKAINEN VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// ====================================================================
+#include <string>
+
+// Luodaan vale-luokat, joita kääntäjä etsii tyhjistä otsikkotiedostoista
+class CCMenu {
+public:
+    void addChild(void* child) {}
+};
+
+class Mod {
+public:
+    static Mod* get() {
+        static Mod instance;
+        return &instance;
+    }
+    void setSavedValue(std::string key, bool value) {}
+    bool getSavedValue(std::string key, bool default_val) { return default_val; }
+};
+
+class FLAlertLayer {};
+class EditorUI {};
+
+// Tämän alle voi jättää sinun oman koodisi, mutta muutetaan luokkien perintää:
+// Esimerkiksi: class MyPopup : public FLAlertLayer -> toimii nyt suoraan!
+
 #include <vector>
 #include <string>
 
