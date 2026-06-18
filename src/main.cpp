@@ -1,5 +1,5 @@
 // ====================================================================
-// KAUKO-ODOTETTU VIIMEINEN LUKITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// TÄYDELLINEN FUNKTIO-YLIKIRJOITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -44,6 +44,14 @@ public:
     void setScale(float scale) {}
     static CCSprite* create(std::string name) {
         static CCSprite instance;
+        return &instance;
+    }
+};
+
+class CCScale9Sprite : public CCSprite {
+public:
+    static CCScale9Sprite* create(std::string name) {
+        static CCScale9Sprite instance;
         return &instance;
     }
 };
@@ -149,39 +157,45 @@ public:
     }
 };
 
-// Luodaan puuttuva tekstinsyöttöruutu, josta rivit 419, 420 ja 421 valittivat!
-class CCTextInputNode : public CCObject {};
+class CCTextInputNode : public CCObject {
+public:
+    static CCTextInputNode* create(float width, float height, std::string placeholder, std::string font) {
+        static CCTextInputNode instance;
+        return &instance;
+    }
+    void setAllowedChars(std::string chars) {}
+};
 
 struct AIConfig {
     std::string chosenDifficulty;
     bool timeLimitHours;
 };
 
-// LUODAAN GEODE-NIMIAVARUUS JA LOKITYÖKALUT
-namespace geode {
-    // Luodaan oletusluokka tyhjille pop-upeille (Popup<> ilman argumenttia rivillä 417!)
-    struct DefaultConfig {};
+class log {
+public:
+    static void info(std::string text) {}
+};
 
-    template <typename T = DefaultConfig>
-    class Popup {
+namespace geode {
+    // Tehdään tästä tavallinen luokka ilman template-sekoituksia, jotta molemmat setupit toimivat ylikirjoituksessa!
+    class PopupBase {
     public:
-        virtual bool setup(T config) { return true; }
+        virtual bool setup(AIConfig config) { return true; }
+        virtual bool setup() { return true; }
         void setTitle(std::string title, std::string font, float scale) {}
         void onClose(void* sender) {}
         
-        // Lisätään puuttuvat alustus- ja autorelease-toiminnot, joista rivit 405 ja 406 valittivat!
-        bool initAnchored(float width, float height, T config) { return true; }
-        Popup* autorelease() { return this; }
+        bool initAnchored(float width, float height, AIConfig config) { return true; }
+        bool initAnchored(float width, float height) { return true; }
+        PopupBase* autorelease() { return this; }
         
         CCSprite* m_bgSprite = new CCSprite();
         CCLayer* m_mainLayer = new CCLayer();
         CCMenu* m_buttonMenu = new CCMenu();
     };
 
-    class log {
-    public:
-        static void info(std::string text) {}
-    };
+    template <typename T = void>
+    class Popup : public PopupBase {};
 }
 
 class LevelEditorLayer {
