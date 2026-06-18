@@ -1,17 +1,23 @@
 // ====================================================================
-//ÄÄRIMMÄISEN LAAJENNETTU GEODE-HACK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// ULTRA-EDISTYNYT TEKSTINMUOKKAUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
 #define menu_selector(_SELECTOR) (void*)(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
-// Luodaan puuttuva CCObject, josta rivi 252 valitti!
 class CCObject {};
 
 struct CCSize {
     float width;
     float height;
+};
+
+// Luodaan vale-rakenne värejä varten, jotta setColor toimii!
+struct ccColor3B {
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
 };
 
 class CCArray : public CCObject {
@@ -25,6 +31,9 @@ public:
         static CCLabelBMFont instance;
         return &instance;
     }
+    // Lisätään puuttuvat toiminnot, joista rivit 183 ja 184 valittivat!
+    void setString(std::string text) {}
+    void setColor(ccColor3B color) {}
 };
 
 class CCMenuItemSpriteExtra : public CCObject {
