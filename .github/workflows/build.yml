@@ -19,10 +19,9 @@ jobs:
         with:
           platform: android
           setup-sdk: true
-        - name: Upload Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-        name: geode-build
-          path: "**/*.geode"
-          
+          name: geode-build
+          path: ./build/*.geode
           
