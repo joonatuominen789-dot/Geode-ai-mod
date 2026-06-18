@@ -18,4 +18,5 @@ jobs:
         uses: geode-sdk/build-geode-mod@main
         with:
           platform: android
-          setup-sdk: true
+          sdk: v3.0.0
+          ndk: 26.1.10909125
