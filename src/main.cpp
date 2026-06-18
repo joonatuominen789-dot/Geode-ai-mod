@@ -1,5 +1,5 @@
 // ====================================================================
-// VIIMEINEN SKAALAUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// FINISH BUTTON JA ID-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -40,8 +40,22 @@ public:
         static CCSprite instance;
         return &instance;
     }
-    // Lisätään puuttuva kokosäätökomento, josta rivi 281 valitti!
     void setScale(float scale) {}
+    
+    // Lisätään varaluontikomento, josta rivi 280 valitti!
+    static CCSprite* create(std::string name) {
+        static CCSprite instance;
+        return &instance;
+    }
+};
+
+// Luodaan puuttuva ButtonSprite-luokka riville 290!
+class ButtonSprite : public CCSprite {
+public:
+    static ButtonSprite* create(std::string text, std::string font, std::string bg, float scale) {
+        static ButtonSprite instance;
+        return &instance;
+    }
 };
 
 class CCLayer : public CCObject {
@@ -74,6 +88,8 @@ public:
         static CCArray instance;
         return &instance;
     }
+    // Lisätään se puuttuva ID-asetuskomento riville 283!
+    void setID(std::string id) {}
 };
 
 class RowLayout {
