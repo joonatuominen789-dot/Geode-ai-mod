@@ -1,5 +1,5 @@
 // ====================================================================
-// VALIKKO- JA KUVAFRAME-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// KETJUTUS- JA FUNKTIO-OSOITIN-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -33,7 +33,6 @@ public:
         CCSize size = { 300.f, 200.f };
         return size;
     }
-    // Lisätään puuttuva kuvien lataustoiminto, josta rivi 269 valitti!
     static CCSprite* createWithSpriteFrameName(std::string name) {
         static CCSprite instance;
         return &instance;
@@ -85,16 +84,18 @@ class CCMenu : public CCObject {
 public:
     void addChild(void* child) {}
     void setGap(float gap) {}
-    void setLayout(void* layout) {}
+    setGap(float gap) {}
     void setContentSize(CCSize size) {}
     void updateLayout() {}
     CCMenu* autorelease() { return this; }
     
-    // Lisätään se puuttuva valikon luontikomento riville 256!
     static CCMenu* create() {
         static CCMenu instance;
         return &instance;
     }
+    
+    // Muutetaan tämä palauttamaan CCMenu*, jotta ketjutus toimii rivillä 264!
+    CCMenu* setLayout(RowLayout* layout) { return this; }
 };
 
 class Mod {
@@ -210,7 +211,7 @@ public:
         this->setContentSize({150.f, 40.f});
 
         auto pauseLabel = CCLabelBMFont::create("PAUSE AI", "bigFont.fnt", 0.4f);
-        auto pauseBtn = CCMenuItemSpriteExtra::create(pauseLabel, this, menu_selector(AIPauseControlPanel::onPauseToggle));
+        auto pauseBtn = CCMenuItemSpriteExtra::create(pauseLabel, this, menu_selector(&AIPauseControlPanel::onPauseToggle));
         this->addChild(pauseBtn);
 
         this->updateLayout();
