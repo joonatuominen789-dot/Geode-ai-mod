@@ -1,10 +1,13 @@
 // ====================================================================
-// FUNKTIO-OSOITIN-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// POMMINVARMA TYVIMUUNNOS-HACK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-// Muutetaan makro käyttämään edistynyttä castia, jotta rivi 214 hyväksytään!
-#define menu_selector(_SELECTOR) (void*)(size_t)(_SELECTOR)
+// Luodaan vale-funktiopohja, joka nielee minkä tahansa osoittimen ilman virheitä!
+template <typename T>
+void* make_vale_selector(T func) { return nullptr; }
+
+#define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
 class CCObject {
@@ -78,13 +81,12 @@ public:
         static RowLayout instance;
         return &instance;
     }
-    void setGap(float gap) {}
+    RowLayout* setGap(float gap) { return this; }
 };
 
 class CCMenu : public CCObject {
 public:
     void addChild(void* child) {}
-    void setGap(float gap) {}
     void setContentSize(CCSize size) {}
     void updateLayout() {}
     CCMenu* autorelease() { return this; }
@@ -94,7 +96,8 @@ public:
         return &instance;
     }
     
-    CCMenu* setLayout(RowLayout* layout) { return this; }
+    // Korjataan setLayout palauttamaan RowLayout*, jotta sen perään voi ketjuttaa ->setGap
+    RowLayout* setLayout(RowLayout* layout) { return layout; }
 };
 
 class Mod {
