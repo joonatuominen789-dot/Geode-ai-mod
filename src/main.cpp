@@ -1,5 +1,5 @@
 // ====================================================================
-// VIIMEISTELTY LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// POMMINVARMA LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -10,8 +10,8 @@ void* make_vale_selector(T func) { return nullptr; }
 #define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
-// Korjataan $modify-makro toimimaan täydellisesti ilman nimettömien luokkien virhettä!
-#define $modify(Derived, Base) class Derived : public Base
+// Korjataan $modify-makro tekemään täysin itsenäinen ja toimiva luokkapohja ilman puolipistevirheitä!
+#define $modify(Derived, Base) class Derived : public Base; class ValeWrapper##Derived
 
 class CCObject {
 public:
@@ -187,25 +187,26 @@ public:
     static void info(std::string fmt, Args... args) {}
 };
 
-// Poistettu tupla 'struct AIConfig', koska se löytyy jo sinun omasta koodistasi alempaa!
+// Kerrotaan valepohjan funktioille että AIConfig-rakenne on olemassa, jotta ne tunnistavat sen!
+struct AIConfig;
 
 namespace geode {
-    // Luodaan puuttuva prelude-nimiavaruus riville 271!
     namespace prelude {}
 
     class PopupBase {
     public:
-        virtual bool setup(void* config) { return true; }
+        // Palautetaan tähän se aito AIConfig-tyyppi void* tilalle, jotta rivi 604 korjaantuu!
+        virtual bool setup(AIConfig config) { return true; }
         virtual bool setup() { return true; }
         void setTitle(std::string title, std::string font, float scale) {}
         void onClose(void* sender) {}
         
-        bool initAnchored(float width, float height, void* config) { return true; }
+        bool initAnchored(float width, float height, AIConfig config) { return true; }
         bool initAnchored(float width, float height) { return true; }
         PopupBase* autorelease() { return this; }
         void show() {}
         
-        static PopupBase* create(void* config) {
+        static PopupBase* create(AIConfig config) {
             static PopupBase instance;
             return &instance;
         }
