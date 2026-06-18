@@ -1,5 +1,5 @@
 // ====================================================================
-// VIIMEISTELTY LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// TÄYDELLINEN VIRTUAALIFUNKTIO-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -200,25 +200,26 @@ public:
 namespace geode {
     namespace prelude {}
 
-    class PopupBase {
+    // Luodaan oletusrakenne tyhjille pop-upeille
+    struct DefaultConfig {};
+
+    // Tehdään Popup-luokasta template, jotta virtuaaliset funktiot toimivat ilman incomplete type -virheitä!
+    template <typename T = DefaultConfig>
+    class Popup {
     public:
-        // Muutetaan nämä käyttämään auto-tyyppiä, jotta epätäydellisen tyypin (incomplete type) virhe poistuu!
-        template <typename T>
-        bool setup(T config) { return true; }
+        virtual bool setup(T config) { return true; }
         virtual bool setup() { return true; }
         
         void setTitle(std::string title, std::string font, float scale) {}
         void onClose(void* sender) {}
         
-        template <typename T>
         bool initAnchored(float width, float height, T config) { return true; }
         bool initAnchored(float width, float height) { return true; }
-        PopupBase* autorelease() { return this; }
+        Popup* autorelease() { return this; }
         void show() {}
         
-        template <typename T>
-        static PopupBase* create(T config) {
-            static PopupBase instance;
+        static Popup* create(T config) {
+            static Popup instance;
             return &instance;
         }
         
@@ -226,9 +227,6 @@ namespace geode {
         CCLayer* m_mainLayer = new CCLayer();
         CCMenu* m_buttonMenu = new CCMenu();
     };
-
-    template <typename T = void>
-    class Popup : public PopupBase {};
 }
 // ====================================================================
 
