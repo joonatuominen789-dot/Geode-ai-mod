@@ -6,17 +6,20 @@
 #define menu_selector(_SELECTOR) (void*)(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
+// Luodaan puuttuva CCObject, josta rivi 252 valitti!
+class CCObject {};
+
 struct CCSize {
     float width;
     float height;
 };
 
-class CCArray {
+class CCArray : public CCObject {
 public:
     void* objectAtIndex(int index) { return nullptr; }
 };
 
-class CCLabelBMFont {
+class CCLabelBMFont : public CCObject {
 public:
     static CCLabelBMFont* create(std::string text, std::string font, float scale) {
         static CCLabelBMFont instance;
@@ -24,7 +27,7 @@ public:
     }
 };
 
-class CCMenuItemSpriteExtra {
+class CCMenuItemSpriteExtra : public CCObject {
 public:
     static CCMenuItemSpriteExtra* create(void* sprite, void* target, void* selector) {
         static CCMenuItemSpriteExtra instance;
@@ -42,11 +45,10 @@ public:
         static RowLayout instance;
         return &instance;
     }
-    // Lisätään vale-komento, josta rivi 161 valitti!
     void setGap(float gap) {}
 };
 
-class CCMenu {
+class CCMenu : public CCObject {
 public:
     void addChild(void* child) {}
     void setGap(float gap) {}
@@ -75,7 +77,6 @@ namespace geode {
     template <typename T>
     class Popup {
     public:
-        // Tehdään virtuaalinen setup-funktio, jotta override-sana rivillä 206 toimii!
         virtual bool setup(T config) { return true; }
     };
 }
