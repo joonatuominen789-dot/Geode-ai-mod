@@ -9,8 +9,9 @@ void* make_vale_selector(T func) { return nullptr; }
 #define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
+#define $modify(Derived, Base) Derived : public Base
 
-// Korjataan $modify-makro tekemään täysin itsenäinen ja toimiva luokkapohja ilman puolipistevirheitä.#define $modify(Derived, Base) class Derived : public Base; class ValeWrapper##Derived : public Base
+// Korjataan $modify-makro tekemään täysin itsenäinen ja toimiva luokkapohja ilman puolipistevirheitä.ase
 
 
 class CCObject {
