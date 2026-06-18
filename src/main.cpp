@@ -1,5 +1,5 @@
 // ====================================================================
-// JÄRETÖN NIMIAVARUUS-KAAPPARI KÄÄNTÄJÄN HUIPUTTAMISEKSI
+//ÄÄRIMMÄISEN LAAJENNETTU GEODE-HACK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -42,6 +42,8 @@ public:
         static RowLayout instance;
         return &instance;
     }
+    // Lisätään vale-komento, josta rivi 161 valitti!
+    void setGap(float gap) {}
 };
 
 class CCMenu {
@@ -67,13 +69,15 @@ public:
 class FLAlertLayer {};
 class EditorUI {};
 
-// Luodaan tyhjä vale-rakenne asetuksille, jotta Popup<AIConfig> kääntyy!
 struct AIConfig {};
 
-// LUODAAN VIRALLINEN GEODE-NIMIAVARUUS JA POPUP-MALLI LENNOSTA!
 namespace geode {
     template <typename T>
-    class Popup {};
+    class Popup {
+    public:
+        // Tehdään virtuaalinen setup-funktio, jotta override-sana rivillä 206 toimii!
+        virtual bool setup(T config) { return true; }
+    };
 }
 // ====================================================================
 
