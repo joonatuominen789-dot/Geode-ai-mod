@@ -1,9 +1,30 @@
 // ====================================================================
-// KAUKO-ODOTETTU VIIMEINEN LUKITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEISTELTY LOPULLINEN GEODE-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-// Esitellään perusrakenteet heti alussa, jotta CCObject tuntee ne
+template <typename T>
+void* make_vale_selector(T func) { return nullptr; }
+
+#define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
+#define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
+#define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
+
+// Korjataan $modify-makro toimimaan täydellisesti ilman nimettömien luokkien virhettä!
+#define $modify(Derived, Base) class Derived : public Base
+
+class CCObject {
+public:
+    void setPosition(struct CCPoint pos) {}
+    void setColor(struct ccColor3B color) {}
+    void setOpacity(unsigned char opacity) {}
+    void setContentSize(struct CCSize size) {}
+    struct CCPoint getPosition() {
+        struct CCPoint pos = { 0.f, 0.f };
+        return pos;
+    }
+};
+
 struct CCPoint {
     float x;
     float y;
@@ -18,27 +39,6 @@ struct ccColor3B {
     unsigned char r;
     unsigned char g;
     unsigned char b;
-};
-
-template <typename T>
-void* make_vale_selector(T func) { return nullptr; }
-
-#define menu_selector(_SELECTOR) make_vale_selector(_SELECTOR)
-#define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
-#define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
-
-#define $modify(Derived, Base) class Derived : public Base; class Vale##Derived : public Base
-
-class CCObject {
-public:
-    void setPosition(struct CCPoint pos) {}
-    void setColor(struct ccColor3B color) {}
-    void setOpacity(unsigned char opacity) {}
-    void setContentSize(struct CCSize size) {}
-    struct CCPoint getPosition() {
-        struct CCPoint pos = { 0.f, 0.f };
-        return pos;
-    }
 };
 
 class CCSprite : public CCObject {
@@ -134,10 +134,8 @@ public:
 class EditorUI : public CCObject {
 public:
     void addChild(void* child) {}
-    CCMenu* m_editGroupMenu = new CCMenu();
-    
-    virtual bool init(class LevelEditorLayer* editorLayer) { return true; }
     void onAIButtonPressed(CCObject* sender) {}
+    CCMenu* m_editGroupMenu = new CCMenu();
 };
 
 class CCScheduler {
@@ -168,12 +166,6 @@ public:
     std::string getString() { return ""; }
 };
 
-struct AIConfig {
-    std::string chosenDifficulty;
-    bool timeLimitHours;
-    int objectCount;
-};
-
 class Mod {
 public:
     static Mod* get() {
@@ -195,20 +187,25 @@ public:
     static void info(std::string fmt, Args... args) {}
 };
 
+// Poistettu tupla 'struct AIConfig', koska se löytyy jo sinun omasta koodistasi alempaa!
+
 namespace geode {
+    // Luodaan puuttuva prelude-nimiavaruus riville 271!
+    namespace prelude {}
+
     class PopupBase {
     public:
-        virtual bool setup(AIConfig config) { return true; }
+        virtual bool setup(void* config) { return true; }
         virtual bool setup() { return true; }
         void setTitle(std::string title, std::string font, float scale) {}
         void onClose(void* sender) {}
         
-        bool initAnchored(float width, float height, AIConfig config) { return true; }
+        bool initAnchored(float width, float height, void* config) { return true; }
         bool initAnchored(float width, float height) { return true; }
         PopupBase* autorelease() { return this; }
         void show() {}
         
-        static PopupBase* create(AIConfig config) {
+        static PopupBase* create(void* config) {
             static PopupBase instance;
             return &instance;
         }
@@ -230,37 +227,6 @@ public:
     }
     void quickSave() {}
     EditorUI* m_editorUI = new EditorUI();
-};
-
-// ====================================================================
-// VARSINAINEN PUHDISTETTU EDITORI-LAAJENNUS (KORJATTU C++ -YHTEENSOPIVAKSI)
-// ====================================================================
-class MyEditorUI : public EditorUI {
-public:
-    void onAIButtonPressed(CCObject* sender) {
-        EditorUI::onAIButtonPressed(sender);
-    }
-
-    bool init(LevelEditorLayer* editorLayer) override {
-        if (!EditorUI::init(editorLayer)) return false;
-
-        auto buttonLabel = CCSprite::createWithSpriteFrameName("GJ_plusBtn_001.png");
-
-        auto aiButton = CCMenuItemSpriteExtra::create(
-            buttonLabel,
-            this,
-            menu_selector(MyEditorUI::onAIButtonPressed)
-        );
-
-        if (aiButton) {
-            aiButton->setID("ai-generation-button");
-            if (m_editGroupMenu) {
-                m_editGroupMenu->addChild(aiButton);
-            }
-        }
-
-        return true;
-    }
 };
 // ====================================================================
 
