@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Geode
-        uses: geode-sdk/setup-action@main
+        uses: geode-sdk/setup-geode-action@main
         with:
           version: v3.0.0
 
