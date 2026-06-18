@@ -1,5 +1,5 @@
 // ====================================================================
-// PAINIKKEEN SKAALAUS JA VÄRI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// VIIMEINEN ASETUSTALLENNUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -87,6 +87,7 @@ public:
 class CCMenu : public CCObject {
 public:
     void addChild(void* child) {}
+    setGap(float gap) {}
     void setContentSize(CCSize size) {}
     void updateLayout() {}
     CCMenu* autorelease() { return this; }
@@ -109,8 +110,6 @@ public:
     }
     void setID(std::string id) {}
     std::string getID() { return ""; }
-    
-    // Lisätään puuttuvat väritys- ja kokokomennot, joista rivit 324 ja 325 valittivat!
     void setColor(ccColor3B color) {}
     void setScale(float scale) {}
 };
@@ -128,7 +127,11 @@ public:
 class FLAlertLayer {};
 class EditorUI {};
 
-struct AIConfig {};
+// Lisätään puuttuvat muuttujat, joista rivit 334 ja 337 valittivat!
+struct AIConfig {
+    std::string chosenDifficulty;
+    bool timeLimitHours;
+};
 
 namespace geode {
     template <typename T>
