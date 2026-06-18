@@ -3,6 +3,23 @@
 // ====================================================================
 #include <string>
 
+// Esitellään perusrakenteet heti alussa, jotta CCObject tuntee ne
+struct CCPoint {
+    float x;
+    float y;
+};
+
+struct CCSize {
+    float width;
+    float height;
+};
+
+struct ccColor3B {
+    unsigned char r;
+    unsigned char g;
+    unsigned char b;
+};
+
 template <typename T>
 void* make_vale_selector(T func) { return nullptr; }
 
@@ -22,22 +39,6 @@ public:
         struct CCPoint pos = { 0.f, 0.f };
         return pos;
     }
-};
-
-struct CCPoint {
-    float x;
-    float y;
-};
-
-struct CCSize {
-    float width;
-    float height;
-};
-
-struct ccColor3B {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
 };
 
 class CCSprite : public CCObject {
@@ -232,7 +233,7 @@ public:
 };
 
 // ====================================================================
-// KORJATTU JA PUHDISTETTU EDITORI-LAAJENNUS (EI ENÄÄ TUPLAMÄÄRITTELYJÄ)
+// VARSINAINEN PUHDISTETTU EDITORI-LAAJENNUS (KORJATTU C++ -YHTEENSOPIVAKSI)
 // ====================================================================
 class MyEditorUI : public EditorUI {
 public:
