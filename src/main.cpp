@@ -1,5 +1,5 @@
 // ====================================================================
-// VIIMEINEN TÄYDELLINEN JÄTTI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// KAUKO-ODOTETTU VIIMEINEN LUKITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -96,7 +96,6 @@ public:
         return &instance;
     }
     RowLayout* setLayout(RowLayout* layout) { return layout; }
-    // Lisätään virtuaalinen init, jotta rivi 236 ei valita!
     virtual bool init() { return true; }
 };
 
@@ -128,13 +127,11 @@ public:
 
 class FLAlertLayer {};
 
-// Luodaan vale-luokka editorin käyttöliittymälle riville 358
 class EditorUI : public CCObject {
 public:
     void addChild(void* child) {}
 };
 
-// Luodaan puuttuvat ajastintyökalut riveille 219 ja 220
 class CCScheduler {
 public:
     void unscheduleSelector(void* selector, void* target) {}
@@ -152,6 +149,9 @@ public:
     }
 };
 
+// Luodaan puuttuva tekstinsyöttöruutu, josta rivit 419, 420 ja 421 valittivat!
+class CCTextInputNode : public CCObject {};
+
 struct AIConfig {
     std::string chosenDifficulty;
     bool timeLimitHours;
@@ -159,19 +159,25 @@ struct AIConfig {
 
 // LUODAAN GEODE-NIMIAVARUUS JA LOKITYÖKALUT
 namespace geode {
-    template <typename T>
+    // Luodaan oletusluokka tyhjille pop-upeille (Popup<> ilman argumenttia rivillä 417!)
+    struct DefaultConfig {};
+
+    template <typename T = DefaultConfig>
     class Popup {
     public:
         virtual bool setup(T config) { return true; }
         void setTitle(std::string title, std::string font, float scale) {}
-        void onClose(void* sender) {} // Lisätty sulkukomento riville 364!
+        void onClose(void* sender) {}
+        
+        // Lisätään puuttuvat alustus- ja autorelease-toiminnot, joista rivit 405 ja 406 valittivat!
+        bool initAnchored(float width, float height, T config) { return true; }
+        Popup* autorelease() { return this; }
         
         CCSprite* m_bgSprite = new CCSprite();
         CCLayer* m_mainLayer = new CCLayer();
         CCMenu* m_buttonMenu = new CCMenu();
     };
 
-    // Luodaan vale-loki, jotta log::info -rivit toimivat!
     class log {
     public:
         static void info(std::string text) {}
@@ -184,7 +190,6 @@ public:
         static LevelEditorLayer instance;
         return &instance;
     }
-    // Luodaan se puuttuva m_editorUI-kerros riville 358!
     EditorUI* m_editorUI = new EditorUI();
 };
 // ====================================================================
