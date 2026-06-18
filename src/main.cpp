@@ -135,7 +135,6 @@ public:
     void addChild(void* child) {}
     CCMenu* m_editGroupMenu = new CCMenu();
     
-    // Alkuperäinen virtuaalinen init
     virtual bool init(class LevelEditorLayer* editorLayer) { return true; }
     void onAIButtonPressed(CCObject* sender) {}
 };
@@ -233,11 +232,10 @@ public:
 };
 
 // ====================================================================
-// LISÄTTY MYEDITORUI -LUOKKA JA KORJATTU MENU_SELECTOR -VIRHE
+// KORJATTU JA PUHDISTETTU EDITORI-LAAJENNUS (EI ENÄÄ TUPLAMÄÄRITTELYJÄ)
 // ====================================================================
 class MyEditorUI : public EditorUI {
 public:
-    // Esitellään callback tässä luokassa, jotta menu_selector hyväksyy sen
     void onAIButtonPressed(CCObject* sender) {
         EditorUI::onAIButtonPressed(sender);
     }
@@ -245,10 +243,8 @@ public:
     bool init(LevelEditorLayer* editorLayer) override {
         if (!EditorUI::init(editorLayer)) return false;
 
-        // Luodaan testiteksti/label painiketta varten
         auto buttonLabel = CCSprite::createWithSpriteFrameName("GJ_plusBtn_001.png");
 
-        // Osoitetaan nyt täsmälleen tämän luokan omaan funktioon
         auto aiButton = CCMenuItemSpriteExtra::create(
             buttonLabel,
             this,
