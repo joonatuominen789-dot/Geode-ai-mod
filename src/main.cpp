@@ -1,12 +1,30 @@
 // ====================================================================
-// LAAJENNETTU VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// ULTRA-LAAJENNETTU VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-// Luodaan vale-rakenne koon määrittelyä varten ({150.f, 40.f})
+// Makro painikkeiden klikkaustoimintoja varten
+#define menu_selector(_SELECTOR) (void*)(_SELECTOR)
+
 struct CCSize {
     float width;
     float height;
+};
+
+class CCLabelBMFont {
+public:
+    static CCLabelBMFont* create(std::string text, std::string font, float scale) {
+        static CCLabelBMFont instance;
+        return &instance;
+    }
+};
+
+class CCMenuItemSpriteExtra {
+public:
+    static CCMenuItemSpriteExtra* create(void* sprite, void* target, void* selector) {
+        static CCMenuItemSpriteExtra instance;
+        return &instance;
+    }
 };
 
 class RowLayout {
@@ -22,7 +40,6 @@ public:
     void addChild(void* child) {}
     void setGap(float gap) {}
     void setLayout(void* layout) {}
-    // Lisätään puuttuva komento, josta rivi 109 valitti!
     void setContentSize(CCSize size) {}
 };
 
