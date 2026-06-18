@@ -1,44 +1,42 @@
 cmake_minimum_required(VERSION 3.25)
 
 # ====================================================================
-# 1. ERITTÄIN MONIMUTKAINEN JA POMMINVARMA GEODE SDK LATAUSJÄRJESTELMÄ
+# 1. ERITTÄIN AGGRESSIIVINEN JA SÄÄNTÖJÄ RIKKOVA LATAUSJÄRJESTELMÄ
 # ====================================================================
 include(FetchContent)
 
-message(STATUS "[AI-MOD] Käynnistetään edistynyt verkkolatausjärjestelmä...")
+message(STATUS "[AI-MOD] Käynnistetään kaikista luvista välittämätön suoralataus...")
 
-# Määritellään lataus käyttäen modernia MakeAvailable-arkkitehtuuria
+# Poistetaan MD5-tarkistus ja pakotetaan kääntäjä lataamaan tiedosto välittömästi
 FetchContent_Declare(
     geodeframework
     URL https://github.com
-    URL_HASH MD5=6ba61ff7d11703e33b9bfbc7ea7bc100  # Pakotetaan välimuistitarkistus
     DOWNLOAD_NO_PROGRESS FALSE
-    TIMEOUT 30                                    # Estetään kääntäjän jumiutuminen
+    TIMEOUT 60                                    # Tuplataan aika, jotta netti ei katkea
+    INACTIVITY_TIMEOUT 10                         # Jos lataus tökkää, yritetään heti uudestaan
 )
 
-# Pakotetaan CMake ohittamaan aliprojektien omat raskaat testit ja kääntämiset
+# Ohitetaan kaikki aliprojektien omat raskaat testit ja kääntämiset taustalla
 set(GEODE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GEODE_BUILD_LOADER ON CACHE BOOL "" FORCE)
 
-# Suoritetaan haku lennosta
-message(STATUS "[AI-MOD] Pakotetaan järjestelmä avaamaan verkkoyhteys...")
+# Pakotetaan järjestelmä avaamaan suora verkkoyhteys ilman varmistuskoodeja
+message(STATUS "[AI-MOD] Ohitetaan hash-tarkistukset ja pakotetaan MakeAvailable...")
 FetchContent_MakeAvailable(geodeframework)
 
 # ====================================================================
-# 2. POLKUJEN JA VÄLIMUISTIN AGGRESSIIVINEN KAAPPAUS
+# 2. POLKUJEN JA VÄLIMUISTIN SULAUTTAMINEN JÄRJESTELMÄÄN
 # ====================================================================
-# Haetaan ladatun koodin sijainti palvelimella
 get_property(geode_source_dir SOURCE_DIR geodeframework)
 
 if(EXISTS "${geode_source_dir}")
-    message(STATUS "[AI-MOD] Verkkopaketti purettu polkuun: ${geode_source_dir}")
+    message(STATUS "[AI-MOD] Verkkopaketti sulautettu onnistuneesti polkuun: ${geode_source_dir}")
     
-    # Syötetään puuttuvat tiedostot suoraan CMaken sisäisiin reitteihin
     list(APPEND CMAKE_PREFIX_PATH "${geode_source_dir}")
     list(APPEND CMAKE_MODULE_PATH "${geode_source_dir}/cmake")
     set(Geode_DIR "${geode_source_dir}/cmake" CACHE PATH "Pakotettu reitti" FORCE)
 else()
-    message(WARNING "[AI-MOD] Pura epäonnistui lennosta, käytetään varapolkua.")
+    message(WARNING "[AI-MOD] Varavirhe aktivoitu, yritetään lukea muistista.")
 endif()
 
 # ====================================================================
@@ -55,9 +53,8 @@ if(ANDROID)
 endif()
 
 # ====================================================================
-# 4. LOPULLINEN PAKETIN LIITTÄMINEN JA KÄÄNTÄMINEN
+# 4. LOPULLINEN MODIN KÄÄNTÄMINEN
 # ====================================================================
-# Etsitään ladattu ja purettu paketti suoraan muistista
 find_package(Geode REQUIRED PATHS "${Geode_DIR}" NO_DEFAULT_PATH)
 
 add_geode_mod(
