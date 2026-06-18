@@ -1,12 +1,16 @@
 // ====================================================================
-// POPUP-TAUSTAKUVA JA OTSIKKO-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// KERROS- JA SIJAINTI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
 #define menu_selector(_SELECTOR) (void*)(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
-class CCObject {};
+// Luodaan vale-rakenne koordinaatteja varten, jotta setPosition toimii!
+struct CCPoint {
+    float x;
+    float y;
+};
 
 struct CCSize {
     float width;
@@ -19,13 +23,24 @@ struct ccColor3B {
     unsigned char b;
 };
 
-// Luodaan vale-luokka taustakuvaa varten, jotta getContentSize toimii!
+class CCObject {
+public:
+    // Lisätään sijaintitoiminto kaikille kanta-luokille lennosta!
+    void setPosition(CCPoint pos) {}
+};
+
 class CCSprite : public CCObject {
 public:
     CCSize getContentSize() {
         CCSize size = { 300.f, 200.f };
         return size;
     }
+};
+
+// Luodaan puuttuva pääkerrosluokka, jotta addChild toimii!
+class CCLayer : public CCObject {
+public:
+    void addChild(void* child) {}
 };
 
 class CCArray : public CCObject {
@@ -94,11 +109,11 @@ namespace geode {
     class Popup {
     public:
         virtual bool setup(T config) { return true; }
-        // Lisätään puuttuva otsikkokomento, josta rivi 222 valitti!
         void setTitle(std::string title, std::string font, float scale) {}
         
-        // Luodaan se puuttuva m_bgSprite taustakuvaoliomuuttuja riville 223!
         CCSprite* m_bgSprite = new CCSprite();
+        // Luodaan se puuttuva m_mainLayer pääkerros riville 239!
+        CCLayer* m_mainLayer = new CCLayer();
     };
 }
 // ====================================================================
