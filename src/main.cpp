@@ -179,8 +179,6 @@ public:
     static void info(std::string fmt, Args... args) {}
 };
 
-struct AIConfig;
-
 class LevelEditorLayer {
 public:
     static LevelEditorLayer* get() {
@@ -191,13 +189,11 @@ public:
     class EditorUI* m_editorUI = nullptr;
 };
 
-// Siirretään EditorUI alemmas, jotta se tunnistaa LevelEditorLayer-luokan oikein!
 class EditorUI : public CCObject {
 public:
     void addChild(void* child) {}
     void onAIButtonPressed(CCObject* sender) {}
     CCMenu* m_editGroupMenu = new CCMenu();
-    // Lisätään se puuttuva alustusfunktio, josta rivi 546 valitti!
     bool init(LevelEditorLayer* layer) { return true; }
 };
 
@@ -206,17 +202,22 @@ namespace geode {
 
     class PopupBase {
     public:
-        virtual bool setup(AIConfig config) { return true; }
+        // Muutetaan nämä käyttämään auto-tyyppiä, jotta epätäydellisen tyypin (incomplete type) virhe poistuu!
+        template <typename T>
+        bool setup(T config) { return true; }
         virtual bool setup() { return true; }
+        
         void setTitle(std::string title, std::string font, float scale) {}
         void onClose(void* sender) {}
         
-        bool initAnchored(float width, float height, AIConfig config) { return true; }
+        template <typename T>
+        bool initAnchored(float width, float height, T config) { return true; }
         bool initAnchored(float width, float height) { return true; }
         PopupBase* autorelease() { return this; }
         void show() {}
         
-        static PopupBase* create(AIConfig config) {
+        template <typename T>
+        static PopupBase* create(T config) {
             static PopupBase instance;
             return &instance;
         }
