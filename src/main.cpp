@@ -130,7 +130,6 @@ public:
     void setScale(float scale) {}
 };
 
-// Luodaan editorin käyttöliittymäluokka ja lisätään sinne m_editGroupMenu riville 549!
 class EditorUI : public CCObject {
 public:
     void addChild(void* child) {}
@@ -171,7 +170,7 @@ struct AIConfig {
     int objectCount;
 };
 
-// Muutetaan tallennukset käyttämään template-pohjaa, jotta getSavedValue<bool> rivillä 552 toimii!
+// TÄMÄ ON SE KAIKKEIN TÄRKEIN KORJAUS! Varmista että tämä korvaa vanhan Mod-luokan!
 class Mod {
 public:
     static Mod* get() {
