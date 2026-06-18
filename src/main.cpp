@@ -1,5 +1,5 @@
 // ====================================================================
-// ULTRA-EDISTYNYT TEKSTINMUOKKAUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// POPUP-TAUSTAKUVA JA OTSIKKO-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -13,11 +13,19 @@ struct CCSize {
     float height;
 };
 
-// Luodaan vale-rakenne värejä varten, jotta setColor toimii!
 struct ccColor3B {
     unsigned char r;
     unsigned char g;
     unsigned char b;
+};
+
+// Luodaan vale-luokka taustakuvaa varten, jotta getContentSize toimii!
+class CCSprite : public CCObject {
+public:
+    CCSize getContentSize() {
+        CCSize size = { 300.f, 200.f };
+        return size;
+    }
 };
 
 class CCArray : public CCObject {
@@ -31,7 +39,6 @@ public:
         static CCLabelBMFont instance;
         return &instance;
     }
-    // Lisätään puuttuvat toiminnot, joista rivit 183 ja 184 valittivat!
     void setString(std::string text) {}
     void setColor(ccColor3B color) {}
 };
@@ -87,6 +94,11 @@ namespace geode {
     class Popup {
     public:
         virtual bool setup(T config) { return true; }
+        // Lisätään puuttuva otsikkokomento, josta rivi 222 valitti!
+        void setTitle(std::string title, std::string font, float scale) {}
+        
+        // Luodaan se puuttuva m_bgSprite taustakuvaoliomuuttuja riville 223!
+        CCSprite* m_bgSprite = new CCSprite();
     };
 }
 // ====================================================================
