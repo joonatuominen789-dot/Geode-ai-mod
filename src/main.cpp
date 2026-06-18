@@ -1,5 +1,5 @@
 // ====================================================================
-// VIIMEINEN ASETUSTALLENNUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// TASOEDITORI-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -87,7 +87,6 @@ public:
 class CCMenu : public CCObject {
 public:
     void addChild(void* child) {}
-    setGap(float gap) {}
     void setContentSize(CCSize size) {}
     void updateLayout() {}
     CCMenu* autorelease() { return this; }
@@ -127,7 +126,6 @@ public:
 class FLAlertLayer {};
 class EditorUI {};
 
-// Lisätään puuttuvat muuttujat, joista rivit 334 ja 337 valittivat!
 struct AIConfig {
     std::string chosenDifficulty;
     bool timeLimitHours;
@@ -145,6 +143,15 @@ namespace geode {
         CCMenu* m_buttonMenu = new CCMenu();
     };
 }
+
+// Luodaan puuttuva tasoeditoriluokka riville 350!
+class LevelEditorLayer {
+public:
+    static LevelEditorLayer* get() {
+        static LevelEditorLayer instance;
+        return &instance;
+    }
+};
 // ====================================================================
 
 
@@ -307,7 +314,7 @@ protected:
         m_mainLayer->addChild(originalMenu);
 
         auto finishSprite = ButtonSprite::create("FINISH", "goldFont.fnt", "GJ_button_01.png", 0.6f);
-        auto finishBtn = CCMenuItemSpriteExtra::create(finishSprite, this, menu_selector(AISettingsPopup::onFinish));
+        auto finishBtn = CCMenuItemSpriteExtra::create(finishSprite, this, menu_selector(&AISettingsPopup::onFinish));
         finishBtn->setPosition({0, -size.height / 2 + 22.f});
         m_buttonMenu->addChild(finishBtn);
 
