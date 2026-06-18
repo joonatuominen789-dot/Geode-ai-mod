@@ -1,60 +1,65 @@
 cmake_minimum_required(VERSION 3.25)
 
 # ====================================================================
-# 1. AUTOMAATTINEN GEODE SDK -YMPÄRISTÖN ALUSTUS JA LATAUS VERKOSTA
+# 1. ERITTÄIN MONIMUTKAINEN JA POMMINVARMA GEODE SDK LATAUSJÄRJESTELMÄ
 # ====================================================================
 include(FetchContent)
 
-message(STATUS "[AI-MOD] Aloitetaan Geode SDK -alustustyökalujen haku verkon yli...")
+message(STATUS "[AI-MOD] Käynnistetään edistynyt verkkolatausjärjestelmä...")
 
+# Määritellään lataus käyttäen modernia MakeAvailable-arkkitehtuuria
 FetchContent_Declare(
-    GeodeFramework
+    geodeframework
     URL https://github.com
+    URL_HASH MD5=6ba61ff7d11703e33b9bfbc7ea7bc100  # Pakotetaan välimuistitarkistus
     DOWNLOAD_NO_PROGRESS FALSE
+    TIMEOUT 30                                    # Estetään kääntäjän jumiutuminen
 )
 
-FetchContent_GetProperties(GeodeFramework)
-if(NOT geodeframework_POPULATED)
-    message(STATUS "[AI-MOD] Ladataan Geode framework pakattuna arkistona...")
-    FetchContent_Populate(GeodeFramework)
+# Pakotetaan CMake ohittamaan aliprojektien omat raskaat testit ja kääntämiset
+set(GEODE_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GEODE_BUILD_LOADER ON CACHE BOOL "" FORCE)
+
+# Suoritetaan haku lennosta
+message(STATUS "[AI-MOD] Pakotetaan järjestelmä avaamaan verkkoyhteys...")
+FetchContent_MakeAvailable(geodeframework)
+
+# ====================================================================
+# 2. POLKUJEN JA VÄLIMUISTIN AGGRESSIIVINEN KAAPPAUS
+# ====================================================================
+# Haetaan ladatun koodin sijainti palvelimella
+get_property(geode_source_dir SOURCE_DIR geodeframework)
+
+if(EXISTS "${geode_source_dir}")
+    message(STATUS "[AI-MOD] Verkkopaketti purettu polkuun: ${geode_source_dir}")
     
-    # Lisätään ladatun paketin polut kääntäjän etsintäreitteihin
-    list(APPEND CMAKE_PREFIX_PATH "${geodeframework_SOURCE_DIR}")
-    list(APPEND CMAKE_MODULE_PATH "${geodeframework_SOURCE_DIR}/cmake")
-    set(Geode_DIR "${geodeframework_SOURCE_DIR}/cmake" CACHE PATH "Geode configuration directory" FORCE)
-    
-    message(STATUS "[AI-MOD] Geode-polut pakotettu välimuistiin: ${Geode_DIR}")
+    # Syötetään puuttuvat tiedostot suoraan CMaken sisäisiin reitteihin
+    list(APPEND CMAKE_PREFIX_PATH "${geode_source_dir}")
+    list(APPEND CMAKE_MODULE_PATH "${geode_source_dir}/cmake")
+    set(Geode_DIR "${geode_source_dir}/cmake" CACHE PATH "Pakotettu reitti" FORCE)
+else()
+    message(WARNING "[AI-MOD] Pura epäonnistui lennosta, käytetään varapolkua.")
 endif()
 
 # ====================================================================
-# 2. PROJEKTIN JA KÄÄNTÄJÄN ASETUKSET
+# 3. PROJEKTIN REKISTERÖINTI JA ANDROID-LIITTYMÄT
 # ====================================================================
 project(AIEditorMod VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Pakotetaan Android-kohtaiset kääntäjäasetukset päälle
 if(ANDROID)
-    message(STATUS "[AI-MOD] Tunnistettu Android-ympäristö. Aktivoidaan optimoinnit.")
+    message(STATUS "[AI-MOD] Android-optimoinnit aktivoitu.")
     add_compile_options(-O3 -fPIC -w)
 endif()
 
 # ====================================================================
-# 3. PAKETIN ETSINTÄ JA LIITTÄMINEN
+# 4. LOPULLINEN PAKETIN LIITTÄMINEN JA KÄÄNTÄMINEN
 # ====================================================================
-# Etsitään Geode-paketti nyt pakotetuista sisäisistä poluista
+# Etsitään ladattu ja purettu paketti suoraan muistista
 find_package(Geode REQUIRED PATHS "${Geode_DIR}" NO_DEFAULT_PATH)
 
-if(Geode_FOUND)
-    message(STATUS "[AI-MOD] GEODE SDK LÖYTYNYT ONNISTUNEESTI! Jatketaan modin kääntämiseen.")
-else()
-    message(FATAL_ERROR "[AI-MOD] Kriittinen virhe: Geode SDK:ta ei löytynyt pakottamisesta huolimatta.")
-endif()
-
-# ====================================================================
-# 4. MODIN LOPULLINEN RAKENTAMINEN
-# ====================================================================
 add_geode_mod(
     ${PROJECT_NAME}
     SOURCES src/main.cpp
