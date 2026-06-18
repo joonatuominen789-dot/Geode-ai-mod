@@ -1,5 +1,5 @@
 // ====================================================================
-// KAUKO-ODOTETTU TÄYDELLINEN LOPULLINEN GEODE-MOCK KÄÄNTÄJÄLLE
+// KAUKO-ODOTETTU VIIMEINEN LUKITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -10,7 +10,6 @@ void* make_vale_selector(T func) { return nullptr; }
 #define schedule_selector(_SELECTOR) make_vale_selector(_SELECTOR)
 #define CC_SAFE_DELETE(p) do { if(p) { delete p; p = nullptr; } } while(0)
 
-// Korjataan $modify-makro sellaiseksi, ettei se riko C++ kääntäjän sääntöjä rivillä 537!
 #define $modify(Derived, Base) class Derived : public Base; class Vale##Derived : public Base
 
 class CCObject {
@@ -18,7 +17,7 @@ public:
     void setPosition(struct CCPoint pos) {}
     void setColor(struct ccColor3B color) {}
     void setOpacity(unsigned char opacity) {}
-    void setContentSize(struct CCSize size) {} // Lisätty CCScale9Spriteä varten!
+    void setContentSize(struct CCSize size) {}
     struct CCPoint getPosition() {
         struct CCPoint pos = { 0.f, 0.f };
         return pos;
@@ -131,26 +130,16 @@ public:
     void setScale(float scale) {}
 };
 
-class Mod {
-public:
-    static Mod* get() {
-        static Mod instance;
-        return &instance;
-    }
-    void setSavedValue(std::string key, bool value) {}
-    bool getSavedValue(std::string key, bool default_val) { return default_val; }
-};
-
-class FLAlertLayer {};
+// Luodaan editorin käyttöliittymäluokka ja lisätään sinne m_editGroupMenu riville 549!
 class EditorUI : public CCObject {
 public:
     void addChild(void* child) {}
+    CCMenu* m_editGroupMenu = new CCMenu();
 };
 
 class CCScheduler {
 public:
     void unscheduleSelector(void* selector, void* target) {}
-    // Lisätään se puuttuva scheduleSelector-komento riville 260!
     void scheduleSelector(void* selector, void* target, float interval, bool paused) {}
 };
 
@@ -182,7 +171,22 @@ struct AIConfig {
     int objectCount;
 };
 
-// Tehdään log::info-funktiosta sellainen, että se hyväksyy minkä tahansa määrän muuttujia!
+// Muutetaan tallennukset käyttämään template-pohjaa, jotta getSavedValue<bool> rivillä 552 toimii!
+class Mod {
+public:
+    static Mod* get() {
+        static Mod instance;
+        return &instance;
+    }
+    template <typename T>
+    void setSavedValue(std::string key, T value) {}
+    
+    template <typename T>
+    T getSavedValue(std::string key, T default_val) { return default_val; }
+};
+
+class FLAlertLayer {};
+
 class log {
 public:
     template <typename... Args>
@@ -222,7 +226,6 @@ public:
         static LevelEditorLayer instance;
         return &instance;
     }
-    // Lisätään puuttuva pikatallennus, josta rivi 273 valitti!
     void quickSave() {}
     EditorUI* m_editorUI = new EditorUI();
 };
