@@ -2,7 +2,6 @@ name: Build Geode Mod
 
 on: [push, workflow_dispatch]
 
-# Annetaan kääntäjälle oikeudet ladata tiedostoja
 permissions:
   contents: write
   actions: write
@@ -20,5 +19,5 @@ jobs:
         with:
           platform: android
           sdk: v3.0.0
+          ndk: 26.1.10909125
           setup-sdk: true
-          
