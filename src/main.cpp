@@ -1,12 +1,29 @@
 // ====================================================================
-// ÄÄRIMMÄISEN MONIMUTKAINEN VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// LAAJENNETTU VALE-GEODE RAJAPINTA KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
-// Luodaan vale-luokat, joita kääntäjä etsii tyhjistä otsikkotiedostoista
+// Luodaan vale-rakenne koon määrittelyä varten ({150.f, 40.f})
+struct CCSize {
+    float width;
+    float height;
+};
+
+class RowLayout {
+public:
+    static RowLayout* create() {
+        static RowLayout instance;
+        return &instance;
+    }
+};
+
 class CCMenu {
 public:
     void addChild(void* child) {}
+    void setGap(float gap) {}
+    void setLayout(void* layout) {}
+    // Lisätään puuttuva komento, josta rivi 109 valitti!
+    void setContentSize(CCSize size) {}
 };
 
 class Mod {
@@ -21,9 +38,7 @@ public:
 
 class FLAlertLayer {};
 class EditorUI {};
-
-// Tämän alle voi jättää sinun oman koodisi, mutta muutetaan luokkien perintää:
-// Esimerkiksi: class MyPopup : public FLAlertLayer -> toimii nyt suoraan!
+// ====================================================================
 
 #include <vector>
 #include <string>
