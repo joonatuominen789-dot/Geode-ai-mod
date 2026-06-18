@@ -1,5 +1,5 @@
 // ====================================================================
-// FINISH BUTTON JA ID-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
+// KAUKO-ODOTETTU VIIMEINEN LUKITUS-MOCK KÄÄNTÄJÄN HUIPUTTAMISEKSI
 // ====================================================================
 #include <string>
 
@@ -41,15 +41,12 @@ public:
         return &instance;
     }
     void setScale(float scale) {}
-    
-    // Lisätään varaluontikomento, josta rivi 280 valitti!
     static CCSprite* create(std::string name) {
         static CCSprite instance;
         return &instance;
     }
 };
 
-// Luodaan puuttuva ButtonSprite-luokka riville 290!
 class ButtonSprite : public CCSprite {
 public:
     static ButtonSprite* create(std::string text, std::string font, std::string bg, float scale) {
@@ -78,20 +75,6 @@ public:
     void setColor(ccColor3B color) {}
 };
 
-class CCMenuItemSpriteExtra : public CCObject {
-public:
-    static CCMenuItemSpriteExtra* create(void* sprite, void* target, void* selector) {
-        static CCMenuItemSpriteExtra instance;
-        return &instance;
-    }
-    CCArray* getChildren() {
-        static CCArray instance;
-        return &instance;
-    }
-    // Lisätään se puuttuva ID-asetuskomento riville 283!
-    void setID(std::string id) {}
-};
-
 class RowLayout {
 public:
     static RowLayout* create() {
@@ -107,13 +90,27 @@ public:
     void setContentSize(CCSize size) {}
     void updateLayout() {}
     CCMenu* autorelease() { return this; }
-    
     static CCMenu* create() {
         static CCMenu instance;
         return &instance;
     }
-    
     RowLayout* setLayout(RowLayout* layout) { return layout; }
+};
+
+class CCMenuItemSpriteExtra : public CCObject {
+public:
+    static CCMenuItemSpriteExtra* create(void* sprite, void* target, void* selector) {
+        static CCMenuItemSpriteExtra instance;
+        return &instance;
+    }
+    CCArray* getChildren() {
+        static CCArray instance;
+        return &instance;
+    }
+    void setID(std::string id) {}
+    
+    // Lisätään se puuttuva ID-luvun palautuskomento riville 317!
+    std::string getID() { return ""; }
 };
 
 class Mod {
@@ -140,6 +137,9 @@ namespace geode {
         
         CCSprite* m_bgSprite = new CCSprite();
         CCLayer* m_mainLayer = new CCLayer();
+        
+        // Luodaan se puuttuva m_buttonMenu valikkokerros riville 309!
+        CCMenu* m_buttonMenu = new CCMenu();
     };
 }
 // ====================================================================
